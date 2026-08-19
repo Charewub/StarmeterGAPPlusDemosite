@@ -30,19 +30,8 @@
   .screen.center{display:none;}
   .screen.center.active{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;}
 
-  /* ===== Top Demo Switcher Bar ===== */
-  .demo-bar {
-    position: fixed; top: 0; left: 0; width: 100%; height: 42px; background: #28344c; color: #fff;
-    display: flex; align-items: center; justify-content: space-between; padding: 0 24px; font-size: 13px; font-weight: 700; z-index: 99999;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.15); border-bottom: 2px solid var(--blue);
-  }
-  .demo-bar-title { display: flex; align-items: center; gap: 8px; color: #ffb648; }
-  .demo-btn-group { display: flex; gap: 8px; }
-  .demo-role-btn { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 4px 14px; border-radius: 14px; font-size: 12px; font-weight: 700; transition: all 0.2s; }
-  .demo-role-btn:hover, .demo-role-btn.active { background: var(--blue); border-color: var(--blue); color: #fff; transform: translateY(-1px); }
-
-  body.has-demo-bar #app { padding-top: 42px; }
-  body.has-demo-bar .app-header { top: 42px; }
+  /* ===== Fix SweetAlert Z-Index ===== */
+  .swal2-container { z-index: 999999 !important; }
 
   /* ===== Loading Spinner ===== */
   .loader-container { text-align: center; }
@@ -104,7 +93,7 @@
   .badge-manager { background: #eaf6fc; color: #0077d6; }
 
   /* ===== App Shell ===== */
-  .app-header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 40px;border-bottom:1px solid var(--gray-line);position:sticky;background:#fff;z-index:40;}
+  .app-header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 40px;border-bottom:1px solid var(--gray-line);position:sticky;top:0;background:#fff;z-index:40;}
   .tabbar-desktop{position:relative;display:flex;gap:4px;}
   .tabbar-desktop .tab-btn{background:none;border:none;padding:10px 18px;font-weight:600;font-size:13.5px;color:#6a6f7c;border-radius:10px;position:relative;z-index:1;transition:color .2s ease,background .2s ease;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.3;}
   .tabbar-desktop .tab-btn:hover{background:#f4f5f7;}
@@ -255,7 +244,7 @@
   .badge-complete { position:absolute; top:16px; right:16px; background:var(--green-dark); color:#fff; font-size:11px; font-weight:700; padding:4px 10px; border-radius:12px; box-shadow:0 2px 6px rgba(21,148,64,.2); z-index:2; }
 
   /* ===== MODAL & CARDS ===== */
-  .modal-overlay{position:fixed;inset:0;background:rgba(20,25,40,.45);display:none;align-items:center;justify-content:center;z-index:5000;padding:20px;} 
+  .modal-overlay{position:fixed;inset:0;background:rgba(20,25,40,.45);display:none;align-items:center;justify-content:center;z-index:100000;padding:20px;} 
   .modal-overlay.active{display:flex;}
   .modal-card { border-radius:26px; padding:34px 38px; max-width:680px; width:100%; max-height:88vh; overflow-y:auto; overflow-x:hidden; position:relative; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
   .modal-close-btn { position:absolute; top:24px; right:24px; background:#e3e6ec; border:none; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; color:#5a5f6c; cursor:pointer; transition:background 0.2s; z-index:10; }
@@ -316,18 +305,12 @@
      MOBILE RESPONSIVE 
      ========================================================= */
   @media (max-width: 640px) {
-    /* Top Demo Bar */
-    .demo-bar { height: 88px; flex-direction: column; justify-content: center; align-items: center; padding: 8px 16px; gap: 8px; }
-    .demo-btn-group { flex-wrap: wrap; justify-content: center; width: 100%; }
-    body.has-demo-bar #app { padding-top: 88px; }
-    body.has-demo-bar .app-header { top: 88px; }
-
     /* Login Portal */
     .portal-grid { grid-template-columns: 1fr; margin-top: 16px; }
     .google-auth-card { padding: 24px 20px 20px; border-radius: 18px; }
 
     /* App Shell */
-    .app-header{padding:14px 16px;}
+    .app-header{padding:14px 16px; top: 0;}
     .tabbar-desktop{display:none;}
     .header-name, .header-role{display:none;}
     main#tab-content{padding:20px 16px 96px;}
@@ -382,20 +365,7 @@
   }
 </style>
 </head>
-<body class="has-demo-bar">
-
-<!-- TOP DEMO CONTROLLER BAR -->
-<div class="demo-bar">
-  <div class="demo-bar-title">
-    <i class="fa-solid fa-wand-magic-sparkles"></i> 
-    <span>StarMeter Interactive Sync Demo Portal</span>
-  </div>
-  <div class="demo-btn-group">
-    <button class="demo-role-btn" id="btn-switch-staff" onclick="triggerGoogleAuthModal()">
-      <i class="fa-solid fa-right-to-bracket"></i> Login / Switch Account
-    </button>
-  </div>
-</div>
+<body>
 
 <div id="app">
 
