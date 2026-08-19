@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>StarMeter - Cross-Role Interactive Demo Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+  :root{
+    --navy:#28344c; --navy-dark:#1c2537;
+    --red:#ff3b30; --red-dark:#e0281e; --red-tint:#ffe3e1;
+    --blue:#0091ff; --blue-dark:#0077d6; --blue-tint:#eaf6fc; --blue-tint-2:#d7edf9;
+    --green:#1fae4d; --green-dark:#159440; --green-tint:#e6faec; --green-tint-2:#c8f0d2; --green-select:#2bb94a;
+    --cream:#fdeecb; --cream-text:#c98a1f;
+    --gray-input:#d6d6d6; --gray-text:#8b90a0; --gray-line:#e3e6ec;
+    font-family:'Noto Sans Thai','Inter',sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:#f2f3f6;color:#1c2130;}
+  button{font-family:inherit;cursor:pointer;}
+  textarea,input{font-family:inherit;}
+  #app{max-width:1360px;margin:0 auto;background:#fff;min-height:100vh;position:relative;box-shadow:0 0 60px rgba(0,0,0,.06);}
+
+  .screen{display:none;min-height:100vh;}
+  .screen.active{display:block;}
+  .screen.center{display:none;}
+  .screen.center.active{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;}
+
+  /* ===== Top Demo Switcher Bar ===== */
+  .demo-bar {
+    position: fixed; top: 0; left: 0; width: 100%; height: 42px; background: #28344c; color: #fff;
+    display: flex; align-items: center; justify-content: space-between; padding: 0 24px; font-size: 13px; font-weight: 700; z-index: 99999;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15); border-bottom: 2px solid var(--blue);
+  }
+  .demo-bar-title { display: flex; align-items: center; gap: 8px; color: #ffb648; }
+  .demo-btn-group { display: flex; gap: 8px; }
+  .demo-role-btn { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 4px 14px; border-radius: 14px; font-size: 12px; font-weight: 700; transition: all 0.2s; }
+  .demo-role-btn:hover, .demo-role-btn.active { background: var(--blue); border-color: var(--blue); color: #fff; transform: translateY(-1px); }
+
+  body.has-demo-bar .app-header { top: 42px; }
+
+  /* ===== Loading Spinner ===== */
+  .loader-container { text-align: center; }
+  .spinner { width: 44px; height: 44px; border: 4px solid var(--blue-tint-2); border-top: 4px solid var(--blue); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  .loading-text { font-size: 15px; font-weight: 700; color: #3a3f4c; margin-top:16px; }
+  .loading-subtext { font-size: 12px; color: #9aa0ae; margin-top:6px; }
+
+  /* ===== Logo ===== */
+  .logo-slot{display:inline-flex;align-items:center;gap:9px;}
+  .logo-slot .wordmark{font-weight:800;color:var(--navy);letter-spacing:-.3px;}
+  .logo-slot[data-size="small"] .wordmark{font-size:19px;}
+  .logo-slot[data-size="big"]{flex-direction:column;gap:6px;}
+  .logo-slot[data-size="big"] .wordmark{font-size:36px;letter-spacing:-.5px;}
+  .logo-img{display:block;object-fit:contain; max-height: 100%;}
+  .logo-slot[data-size="small"] .logo-img{height:36px;width:auto;}
+  .logo-slot[data-size="big"] .logo-img{height:80px;width:auto;}
+  .subtitle{font-size:18px;color:#333;margin-top:2px;font-weight:500;}
+
+  /* ===== Google Login Button (FIXED) ===== */
+  .google-btn {
+    display: flex; align-items: center; justify-content: center; gap: 10px; width: min(340px, 100%);
+    background: #fff; border: 1px solid #dadce0; border-radius: 24px; padding: 12px 20px;
+    font-weight: 600; font-size: 15px; color: #3c4043; margin-top: 24px;
+    cursor: pointer; transition: box-shadow 0.15s ease, transform 0.15s ease;
+  }
+  .google-btn:hover { box-shadow: 0 4px 14px rgba(60,64,67,0.18); transform: translateY(-1px); }
+
+  /* Login Info Elements */
+  .login-warning {
+    background: #fff8e1; border: 1px solid #ffe082; color: #d48806; border-radius: 12px; padding: 16px 20px; font-size: 12.5px; margin-top: 24px; width: min(340px, 100%); text-align: left; line-height: 1.6;
+  }
+  .login-warning ul { margin: 8px 0 0; padding-left: 22px; color: #5a5f6c; }
+  .login-warning li { margin-bottom: 6px; }
+
+  .cookie-accordion { width: min(340px, 100%); margin-top: 16px; border: 1px solid var(--gray-line); border-radius: 12px; background: #fff; overflow: hidden; text-align: left; }
+  .accordion-header { width: 100%; padding: 12px 16px; background: #f9f9fb; border: none; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 700; color: #4a4f5c; cursor: pointer; }
+  .accordion-content { display: none; padding: 16px; font-size: 12px; color: #5a5f6c; background: #fff; border-top: 1px solid var(--gray-line); }
+  .accordion-content.show { display: block; }
+  .accordion-content ul { margin: 0; padding-left: 20px; }
+  .accordion-content li { margin-bottom: 6px; line-height: 1.5; }
+
+  /* ===== Mock Google Auth Popup Modal ===== */
+  .google-auth-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 999999; padding: 20px; backdrop-filter: blur(3px); }
+  .google-auth-overlay.active { display: flex; }
+  .google-auth-card { background: #fff; border-radius: 24px; max-width: 440px; width: 100%; padding: 36px 32px 28px; box-shadow: 0 24px 48px rgba(0,0,0,0.2); text-align: center; position: relative; animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+  @keyframes popIn { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .google-account-list { margin-top: 24px; text-align: left; border: 1px solid #dadce0; border-radius: 12px; overflow: hidden; }
+  .google-account-item { display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-bottom: 1px solid #f1f3f4; cursor: pointer; transition: background 0.15s; }
+  .google-account-item:last-child { border-bottom: none; }
+  .google-account-item:hover { background: #f8f9fa; }
+  .google-account-avatar { width: 42px; height: 48px; border-radius: 50%; object-fit: cover; }
+  .google-account-info { flex: 1; min-width: 0; }
+  .google-account-name { font-size: 14px; font-weight: 700; color: #202124; margin-bottom: 2px; }
+  .google-account-email { font-size: 12px; color: #5f6368; word-break: break-all; }
+  .google-account-badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .badge-staff { background: #e6faec; color: #159440; }
+  .badge-manager { background: #eaf6fc; color: #0077d6; }
+
+  /* ===== App Shell ===== */
+  .app-header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 40px;border-bottom:1px solid var(--gray-line);position:sticky;top:42px;background:#fff;z-index:40;}
+  .tabbar-desktop{position:relative;display:flex;gap:4px;}
+  .tabbar-desktop .tab-btn{background:none;border:none;padding:10px 18px;font-weight:600;font-size:13.5px;color:#6a6f7c;border-radius:10px;position:relative;z-index:1;transition:color .2s ease,background .2s ease;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.3;}
+  .tabbar-desktop .tab-btn:hover{background:#f4f5f7;}
+  .tabbar-desktop .tab-btn.active{color:var(--blue);}
+  .tabbar-desktop .tab-btn .th-sub{font-size:10.5px;color:#9aa0ae;font-weight:500;}
+  .tabbar-desktop .tab-btn.active .th-sub{color:var(--blue-dark);}
+  .tab-indicator{position:absolute;bottom:-2px;height:3px;background:var(--blue);border-radius:3px;transition:left .28s cubic-bezier(.4,0,.2,1), width .28s cubic-bezier(.4,0,.2,1);}
+  .header-right{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .header-avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid var(--gray-line);}
+  .header-name{font-size:13px;font-weight:700;color:#1c2130;text-align:right;}
+  .header-role{font-size:11px;color:#9aa0ae;text-align:right;}
+  .logout-link{background:none;border:none;font-size:11.5px;color:var(--red);font-weight:700;}
+
+  main#tab-content{padding:32px 56px 90px;position:relative;}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;opacity:1;transform:translateY(0);transition:opacity .22s ease, transform .22s ease;}
+  .subscreen{padding:32px 56px 110px;position:relative;}
+
+  .toast{position:fixed;top:60px;left:50%;transform:translateX(-50%) translateY(-14px);background:var(--navy-dark);color:#fff;font-size:13.5px;font-weight:600;padding:13px 22px;border-radius:12px;box-shadow:0 10px 26px rgba(0,0,0,.25);z-index:99999;opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;max-width:90vw;text-align:center;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast.success{background:var(--green-dark);}
+
+  .fab{position:fixed;bottom:30px;right:calc(50% - 624px);background:var(--blue);color:#fff;border:none;padding:11px 26px;border-radius:24px;font-weight:700;font-size:14px;box-shadow:0 6px 16px rgba(0,145,255,.35);transition:transform .15s ease;}
+  .fab:hover{transform:translateY(-2px);}
+  @media (max-width:1360px){.fab{right:30px;}}
+
+  .page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-top:6px;margin-bottom:8px;}
+  .page-title-en{font-size:15px;color:#9aa0ae;text-align:right;}
+  .page-title-th{font-size:13px;color:#b7bbc6;text-align:right;}
+
+  /* Grids & Cards */
+  .team-grid-wrap{background:#f4f6f9;border-radius:26px;padding:22px;margin-top:26px;}
+  .members-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .member-card{background:linear-gradient(180deg,#eaf6fc 0%,#ffffff 100%);border:1px solid var(--blue-tint-2);border-radius:18px;padding:18px;}
+  .member-top{display:flex;gap:14px;align-items:center;}
+  .member-photo{width:78px;height:78px;border-radius:14px;object-fit:cover;flex-shrink:0;border:1px solid #fff; background:#fff;}
+  .member-name-wrap{flex:1; word-break:break-word;}
+  .member-name{font-weight:700;font-size:16.5px;color:#1c2130;line-height:1.2;}
+  .member-role-id{font-size:11.5px;color:#8b90a0;margin-top:4px;font-weight:500;}
+  .member-stats{display:flex;gap:10px;margin-top:16px;}
+  .stat{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;}
+  .stat .label-en{font-size:11px;font-weight:700;color:#333;}
+  .stat .label-th{font-size:10px;color:#8b90a0;}
+  .balance-pill{background:var(--cream);border-radius:10px;padding:8px 0;width:100%;text-align:center;font-weight:800;font-size:16px;color:#7a5410;}
+  .round-btn{width:38px;height:38px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;}
+  .round-btn.blue{background:var(--blue);}
+  .round-btn.blue-lt{background:#bfe0f5;color:var(--blue-dark);}
+  .entry-list{margin-top:14px;max-height:118px;overflow:auto;padding:0;font-size:12.5px;line-height:2;}
+  .entry-list .entry-item{cursor:default;display:block;font-weight:700;}
+  .entry-list .entry-item.g{color:var(--green-dark);}
+  .entry-list .entry-item.r{color:var(--red-dark);}
+  .entry-list .entry-item:hover{text-decoration:underline;}
+
+  .entry-tooltip{position:fixed;z-index:300;background:#161b26;color:#fff;padding:10px 14px;border-radius:10px;font-size:12px;line-height:1.55;max-width:230px;pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .12s ease, transform .12s ease;box-shadow:0 10px 26px rgba(0,0,0,.28);}
+  .entry-tooltip.show{opacity:1;transform:translateY(0);}
+  .entry-tooltip .tip-desc{color:#e7e9ee;}
+  .entry-tooltip .tip-points{margin-top:6px;font-weight:800;font-size:13px;}
+  .entry-tooltip .tip-points.g{color:#6fe39a;}
+  .entry-tooltip .tip-points.r{color:#ff8f88;}
+
+  .mini-header{display:flex;justify-content:space-between;align-items:center;margin-top:20px;flex-wrap:wrap;gap:14px;}
+  .mini-identity{display:flex;align-items:center;gap:14px;}
+  .mini-avatar-wrap{position:relative;flex-shrink:0;}
+  .mini-avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;display:block; background:#fff; border:1px solid var(--gray-line);}
+  .mini-name{font-weight:700;font-size:16px;color:#1c2130;line-height:1.3;}
+  .mini-role{font-size:13px;color:#8b90a0;line-height:1.3;}
+  .mini-balance{display:flex;align-items:center;gap:16px;}
+  .mini-balance-label{font-size:13px;color:#333;text-align:right;line-height:1.3;}
+  .mini-balance-label .sub{display:block;font-size:11px;color:#9aa0ae;}
+  .balance-pill-lg{background:#fff;border:1px solid #d8dbe2;border-radius:30px;padding:11px 30px;font-size:26px;font-weight:800;color:#1c2130;min-width:90px;text-align:center;}
+
+  /* Fade Panel */
+  .fade-panel{background:linear-gradient(180deg,#f8f9fb 0%,#eef1f5 100%);border-radius:22px;padding:22px;margin-top:18px;position:relative;}
+  .fade-panel.scroll{max-height:600px;overflow-y:auto;}
+  .fade-panel .entry-card{background:#fff;border:1px solid var(--gray-line);border-radius:16px;padding:18px 22px;margin-bottom:14px;}
+  .fade-panel .entry-card:first-child{border-color:var(--blue);box-shadow:0 0 0 2px rgba(0,145,255,.15);}
+  .fade-colname{font-size:11px;color:#9aa0ae;margin-bottom:4px;}
+  .fade-topic{font-weight:700;font-size:16px;}
+  .fade-topic.g{color:var(--green-dark);}
+  .fade-topic.r{color:var(--red-dark);}
+  .fade-point{font-size:24px;font-weight:800;text-align:right;}
+  .fade-point.g{color:var(--green-dark);}
+  .fade-point.r{color:var(--red-dark);}
+  .fade-desc{font-size:13px;color:#4a4f5c;margin-top:10px;line-height:1.6;}
+  .fade-entry-top{display:flex;justify-content:space-between;gap:20px;}
+  .fade-entry-top .col{flex:1;}
+
+  .field-label{font-size:14px;font-weight:700;color:#1c2130;margin-top:4px;}
+  .lorem-box{width:100%;border:1px solid var(--gray-line);border-radius:10px;background:#fff;padding:12px 14px;font-size:13px;color:#4a4f5c;resize:none;line-height:1.6;}
+  .just-grid{display:flex;gap:30px;}
+  .just-fields{flex:1;min-width:0;}
+  .just-point{width:230px;flex-shrink:0;}
+  .point-pill-input{width:100%;height:64px;border-radius:32px;text-align:center;font-size:30px;font-weight:800;border:none;outline:none;}
+  .point-pill-input.pos{background:var(--green-tint-2);color:var(--green-dark);box-shadow:0 0 0 6px rgba(31,174,77,.12);}
+  .point-pill-input.neg{background:#fcd6d3;color:var(--red-dark);box-shadow:0 0 0 6px rgba(224,40,30,.12);}
+  .just-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px;}
+  .btn-pill{border:none;border-radius:20px;padding:11px 26px;font-weight:700;font-size:13.5px;color:#fff;}
+  .btn-pill.red{background:var(--red);}
+  .btn-pill.green{background:var(--green);}
+  .btn-pill.blue{background:var(--blue);}
+
+  .edit-table-head{display:grid;grid-template-columns:1fr 2fr 110px;gap:20px;font-weight:700;font-size:14px;color:#1c2130;padding-bottom:10px;border-bottom:1px solid var(--gray-line);}
+  .edit-table-row{display:grid;grid-template-columns:1fr 2fr 110px;gap:20px;padding:18px 0;border-bottom:1px solid var(--gray-line);align-items:start;}
+  .edit-table-row:last-child{border-bottom:none;}
+  .edit-table-topic{font-weight:700;font-size:14px;background:none;border:none;text-align:left;padding:0;cursor:pointer;font-family:inherit;}
+  .edit-table-topic.g{color:var(--green-dark);}
+  .edit-table-topic.r{color:var(--red-dark);}
+  .edit-table-desc{font-size:12.5px;color:#4a4f5c;line-height:1.6;}
+  .edit-table-point{background:#fff;border:1px solid var(--gray-line);border-radius:20px;padding:8px 0;text-align:center;font-weight:800;font-size:16px;color:#1c2130;}
+  .edit-table-editrow{grid-column:1/-1;background:var(--blue-tint);border-radius:14px;padding:16px;margin-top:-6px;}
+  .btn-chip{border:none;border-radius:16px;padding:8px 20px;font-size:12.5px;font-weight:700;}
+  .btn-chip.gray{background:#dfe2e8;color:#555;}
+  .btn-chip.blue{background:var(--blue);color:#fff;}
+
+  /* Learning Team Grid */
+  .lteam-block{margin-bottom:20px;}
+  .lteam-row{background:var(--blue-tint);border:1px solid var(--blue-tint-2);border-radius:18px;padding:16px 20px;display:flex;align-items:center;gap:20px;}
+  .lteam-head{display:flex;align-items:center;gap:14px;flex-shrink:0;}
+  .lteam-row img{width:44px;height:44px;border-radius:10px;object-fit:cover; background:#fff;}
+  .lteam-name-wrap{width:145px; flex-shrink:0; word-break:break-word; padding-right:10px;}
+  .lteam-name{font-weight:700;font-size:14px;color:#1c2130;line-height:1.2;}
+  .lteam-role-id{font-size:11px;color:#8b90a0;margin-top:2px;font-weight:500;}
+  .comp-chips{display:flex;gap:10px;flex:1;flex-wrap:wrap;}
+  .comp-chip{flex:1;min-width:140px;border:none;border-radius:10px;padding:12px 14px;text-align:left;cursor:pointer;font-size:12px;line-height:1.5;}
+  .comp-chip .en{font-weight:700;display:block;margin-bottom:2px;}
+  .comp-chip.on{background:var(--green-select);color:#fff;}
+  .comp-chip.off{background:var(--green-tint-2);color:#1a6b34;}
+  .comp-chip.plus{background:var(--blue-tint-2);color:var(--blue-dark);}
+  .comp-chip .arrow{float:right;opacity:.7;}
+
+  /* Goal Page (My Learning) */
+  .goal-sub{font-size:13px;color:#5a5f6c;margin:4px 0 16px;}
+  .goal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .goal-card{border:none;text-align:left;border-radius:16px;padding:20px;cursor:pointer;position:relative;min-height:150px;transition:background .15s ease,color .15s ease;}
+  .goal-card.green{background:var(--green-tint);}
+  .goal-card.blue{background:var(--blue-tint);}
+  .goal-card.green.selected{background:var(--green-select);}
+  .goal-card.green.selected .th-name,.goal-card.green.selected .en-name{color:#fff;}
+  .goal-card.green.selected .desc{color:rgba(255,255,255,.88);}
+  .goal-card.green.selected .tag{color:rgba(255,255,255,.75);}
+  .goal-card.green.selected .arrow{color:#fff;}
+  .goal-card .tag{font-size:11px;color:#7a8090;}
+  .goal-card .th-name{font-weight:700;font-size:13.5px;margin-top:4px;color:#1c2130;padding-right:26px;}
+  .goal-card .en-name{font-weight:700;font-size:13.5px;color:#1c2130;}
+  .goal-card .desc{font-size:10.5px;color:#6b7280;margin-top:8px;line-height:1.5;}
+  .goal-card .arrow{position:absolute;bottom:14px;right:16px;color:var(--blue);font-size:15px;}
+  .badge-complete { position:absolute; top:16px; right:16px; background:var(--green-dark); color:#fff; font-size:11px; font-weight:700; padding:4px 10px; border-radius:12px; box-shadow:0 2px 6px rgba(21,148,64,.2); z-index:2; }
+
+  /* ===== MODAL & CARDS ===== */
+  .modal-overlay{position:fixed;inset:0;background:rgba(20,25,40,.45);display:none;align-items:center;justify-content:center;z-index:5000;padding:20px;} 
+  .modal-overlay.active{display:flex;}
+  .modal-card { border-radius:26px; padding:34px 38px; max-width:680px; width:100%; max-height:88vh; overflow-y:auto; overflow-x:hidden; position:relative; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+  .modal-close-btn { position:absolute; top:24px; right:24px; background:#e3e6ec; border:none; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; color:#5a5f6c; cursor:pointer; transition:background 0.2s; z-index:10; }
+  .modal-close-btn:hover { background:#d1d5db; color:#1c2130; }
+
+  .modal-card.mandatory { background: #f0f8ff; border: none; }
+  .modal-card.selective { background: #ffffff; border: 2px solid var(--green-select); }
+  .modal-card.selective.selected { background: #f2fcf5; border: none; }
+
+  .modal-card .tag{font-size:16px; font-weight:800; color:#1c2130; margin-bottom:0;} 
+  .modal-card h2{font-size:20px;margin:0 0 6px;color:#1c2130; line-height: 1.4;}
+  .modal-card h3{font-size:16px;margin:0 0 14px;color:#1c2130; font-weight: 700;}
+  .modal-card .desc{font-size:12.5px;color:#5a5f6c;line-height:1.6; margin-bottom: 24px;}
+  
+  .section-label{font-size:13px; color:#1c2130; display:flex; justify-content:space-between; align-items:flex-end; border-bottom: 1px dashed #d1d5db; padding-bottom: 12px; margin-bottom: 16px;}
+  .section-label span.right { font-size:11px; color:#7a8090; font-weight: normal; }
+  
+  .top-right-status { border-radius: 20px; padding: 8px 18px; font-weight: 700; font-size: 13.5px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; border: none; cursor: pointer; }
+  .top-right-status.mandatory { background: var(--blue); color: #fff; cursor: default; }
+  .modal-card.selective .top-right-status.selective-selected,
+  .modal-card.selective .top-right-status.completed { background: var(--green-select); color: #fff; }
+  .modal-card.selective .top-right-status.selective-unselected { background: #fff; border: 1px solid var(--green-select); color: var(--green-select); }
+
+  .activity-box { border: 1px solid #d1d5db; border-radius: 12px; margin-bottom: 16px; background: #fff; overflow: hidden; transition: box-shadow 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.02);}
+  .activity-box:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .activity-row{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;cursor:pointer; padding: 18px 20px; transition: background 0.2s;}
+  .activity-row:hover { background:rgba(0,0,0,0.01); }
+  .activity-provider{font-size:13px;color:#4a4f5c;white-space:nowrap;display:flex;align-items:center;gap:6px; margin-top:2px;}
+  
+  .activity-detail{padding:0 20px 24px 20px;}
+  .cert-upload{background:none;color:#5a5f6c;border:none;padding:0;font-size:12.5px;font-weight:400;display:inline-flex;align-items:center;gap:8px;cursor:pointer; margin-top:6px;}
+  .file-status{font-size:12.5px;font-weight:700;color:var(--blue); display:inline-flex; align-items:center; gap:6px; margin-top:10px; margin-bottom:4px;}
+  
+  .reflection-box { width:100%; border:1px solid var(--gray-input); border-radius:12px; background:#fafafa; padding:16px; font-size:13px; color:#4a4f5c; resize:none; line-height:1.6; margin-top: 14px; }
+  .reflection-box:focus { outline: 1px solid var(--blue); background:#fff; }
+  .reflection-box:disabled { background: #f2f3f6; cursor: not-allowed; opacity:0.8;}
+  
+  .btn-acc-action { border:none; border-radius:16px; padding:10px 26px; font-weight:700; font-size:13px; color:#fff; margin-top: 12px; float: right; cursor: pointer;}
+  .btn-acc-action.green { background: var(--green-select); }
+  .btn-acc-action.blue { background: var(--blue); }
+  .btn-acc-action.yellow { background: #ffc107; color: #1c2130; }
+  .clear-float { clear: both; }
+
+  .stepper-wrapper { display: flex; gap: 12px; margin-top: 34px; padding-top: 24px; border-top: 1px dashed #d1d5db; }
+  .step-item { flex: 1; display: flex; flex-direction: column; gap: 8px; text-align: center; align-items: center; }
+  .step-dash { height: 6px; border-radius: 4px; background: #e3e6ec; transition: background 0.3s; width: 100%; }
+  .step-label { font-size: 11.5px; color: #8b90a0; font-weight: 700; transition: color 0.3s; }
+
+  .step-item.blue-active .step-dash { background: var(--blue); }
+  .step-item.blue-active .step-label { color: var(--blue); }
+  .step-item.green-active .step-dash { background: var(--green-select); }
+  .step-item.green-active .step-label { color: var(--green-select); }
+
+</style>
+</head>
+<body class="has-demo-bar">
+
+<!-- TOP DEMO CONTROLLER BAR -->
+<div class="demo-bar">
+  <div class="demo-bar-title">
+    <i class="fa-solid fa-wand-magic-sparkles"></i> 
+    <span>StarMeter Interactive Sync Demo Portal</span>
+  </div>
+  <div class="demo-btn-group">
+    <button class="demo-role-btn" id="btn-switch-staff" onclick="triggerGoogleAuthModal()">
+      <i class="fa-solid fa-right-to-bracket"></i> Login / Switch Account
+    </button>
+  </div>
+</div>
+
+<div id="app">
+
+  <!-- LOADING SCREEN -->
+  <section id="scr-loading" class="screen center active">
+    <div class="loader-container">
+      <div class="logo-slot" data-size="big" style="margin-bottom: 40px;"></div>
+      <div class="spinner"></div>
+      <div class="loading-text" id="loading-text-main">กำลังเข้าสู่ระบบและเตรียมข้อมูล...</div>
+      <div class="loading-subtext" id="loading-subtext-main">Authenticating with Google Account</div>
+    </div>
+  </section>
+
+  <!-- AUTHENTIC LOGIN SCREEN -->
+  <section id="scr-login" class="screen center">
+    <div class="logo-slot" data-size="big"></div>
+    <div class="subtitle" style="margin-top:-2px;">Sign in to continue</div>
+    
+    <div class="login-warning">
+      <div><i class="fa-solid fa-triangle-exclamation"></i> <b>คำแนะนำการใช้งาน:</b></div>
+      <ul>
+        <li>กรุณาเข้าสู่ระบบด้วยอีเมล <b>@airasia.com</b> เท่านั้น</li>
+        <li style="margin-top: 4px;">หากเปิดลิงก์ผ่านแอป LINE แนะนำให้กดปุ่ม <b>⋮</b> (มุมขวาบน) แล้วเลือก <b>เปิดในเบราว์เซอร์อื่น</b> (Open in Browser) เพื่อป้องกันปัญหาการล็อกอิน</li>
+        <li style="margin-top: 4px;">กรุณาอนุญาตคุกกี้ (Allow Cookies)</li>
+      </ul>
+    </div>
+
+    <!-- GOOGLE LOGIN BUTTON -->
+    <button class="google-btn" onclick="triggerGoogleAuthModal()">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.96v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.03l2.99-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.97l2.99 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
+      Continue with Google
+    </button>
+    
+    <div style="margin-top: 16px; font-size: 11.5px; color: #5a5f6c; display: flex; align-items: center; justify-content: center; gap: 6px; width: min(340px, 100%);">
+        <input type="checkbox" id="privacy-check" checked style="cursor: pointer; width: 14px; height: 14px; accent-color: var(--blue);">
+        <label for="privacy-check" style="cursor: pointer;">I have read and accept the <b>Privacy Statement</b></label>
+    </div>
+
+    <div class="cookie-accordion">
+       <button class="accordion-header" onclick="toggleCookieInfo()">วิธีอนุญาตคุกกี้ <i class="fa-solid fa-chevron-down" id="cookie-chevron"></i></button>
+       <div class="accordion-content" id="cookie-content">
+           <ul>
+               <li>แตะ จุด 3 จุด (มุมจอ) > เลือก "การตั้งค่า" (Settings)</li>
+               <li>เลื่อนลงไปและแตะ "การตั้งค่าเว็บไซต์" (Site settings)</li>
+               <li>เลือก "ป๊อปอัปและการเปลี่ยนเส้นทาง" (Pop-ups)</li>
+               <li>เปิดสวิตช์เพื่อ อนุญาต (Allow)</li>
+               <li>กลับมาที่หน้าเว็บ รีเฟรช 1 ครั้ง แล้วกดอนุญาตคุกกี้อีกครั้ง</li>
+               <li>หากติดปัญหาเพิ่มเติม ติดต่อ taa_learning@airasia.com</li>
+           </ul>
+       </div>
+    </div>
+  </section>
+
+  <!-- MOCK GOOGLE AUTH POPUP MODAL -->
+  <div class="google-auth-overlay" id="google-auth-modal">
+    <div class="google-auth-card">
+      <svg width="40" height="40" viewBox="0 0 24 24" style="margin-bottom: 12px;"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.18 1-.78 1.85-1.63 2.45v2.03h2.64c1.55-1.43 2.63-3.54 2.63-6.49z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-2.64-2.03c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H3.96v2.13C5.78 20.54 8.68 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.84c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V8.53H3.96C3.34 9.77 3 11.16 3 12.5s.34 2.73.96 3.97l2.88-1.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 8.68 1 5.78 3.46 3.96 6.53l2.88 2.13c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      <div style="font-size: 18px; font-weight: 700; color: #202124;">Sign in with Google</div>
+      <div style="font-size: 13px; color: #5f6368; margin-top: 4px;">Choose an account to continue to <b>StarMeter</b></div>
+
+      <div class="google-account-list">
+        <!-- ACCOUNT 1: EMPLOYEE VIEW (ณัฐวุฒิ) -->
+        <div class="google-account-item" onclick="selectGoogleAccount('staff_new')">
+          <img class="google-account-avatar" src="https://i.pravatar.cc/150?img=11" alt="">
+          <div class="google-account-info">
+            <div class="google-account-name">ณัฐวุฒิ ยอดเยี่ยม</div>
+            <div class="google-account-email">nattawut.y@airasia.com</div>
+          </div>
+          <span class="google-account-badge badge-staff">Employee View</span>
+        </div>
+
+        <!-- ACCOUNT 2: MANAGER VIEW -->
+        <div class="google-account-item" onclick="selectGoogleAccount('manager')">
+          <img class="google-account-avatar" src="https://i.pravatar.cc/150?img=68" alt="">
+          <div class="google-account-info">
+            <div class="google-account-name">Demo Manager</div>
+            <div class="google-account-email">manager.mkt@airasia.com</div>
+          </div>
+          <span class="google-account-badge badge-manager">Manager View</span>
+        </div>
+      </div>
+
+      <div style="margin-top: 20px; font-size: 11px; color: #70757a; line-height: 1.5;">
+        To continue, Google will share your name, email address, language preference, and profile picture with StarMeter.
+      </div>
+    </div>
+  </div>
+
+  <!-- POST-LOGIN APP SHELL -->
+  <section id="scr-app" class="screen">
+    <header class="app-header">
+      <div class="logo-slot" data-size="small"></div>
+      <nav class="tabbar-desktop" id="tabbar-desktop">
+        <span class="tab-indicator" id="tab-indicator"></span>
+      </nav>
+      <div class="header-right">
+        <div>
+          <div class="header-name" id="header-name">Demo User</div>
+          <div class="header-role" id="header-role">Role</div>
+        </div>
+        <img id="header-avatar" class="header-avatar" src="" alt="">
+        <button class="logout-link" onclick="handleLogout()">ออกจากระบบ</button>
+      </div>
+    </header>
+
+    <main id="tab-content">
+      
+      <!-- MY PERFORMANCE -->
+      <div id="panel-my-performance" class="tab-panel">
+        <div class="mini-header">
+          <div class="mini-identity">
+            <div class="mini-avatar-wrap">
+              <img id="me-avatar-img" class="mini-avatar" src="" alt="">
+            </div>
+            <div>
+              <div class="mini-name" id="me-name-text">Demo User</div>
+              <div class="mini-role" id="me-role-text">Role</div>
+            </div>
+          </div>
+          <div class="mini-balance">
+            <div class="mini-balance-label">Balance<span class="sub">ยอดคงเหลือ</span></div>
+            <div class="balance-pill-lg" id="me-balance">100</div>
+          </div>
+        </div>
+        <div class="fade-panel scroll" id="my-perf-list"></div>
+      </div>
+
+      <!-- MY LEARNING -->
+      <div id="panel-my-learning" class="tab-panel">
+        <h2 style="font-size:22px;margin:0 0 4px;">Learning <span style="font-weight:400;color:#5a5f6c;">| การเรียนรู้</span></h2>
+        <div id="my-learning-container" style="display:flex; flex-direction:column; gap:26px;">
+            <div id="section-mandatory">
+                <div class="goal-sub"><b>Mandatory</b> บังคับตามตำแหน่งงานของท่าน (เริ่ม "กำลังเรียนรู้" ให้อัตโนมัติ)</div>
+                <div class="goal-grid" id="mylearn-mandatory"></div>
+            </div>
+            <div id="section-selective">
+                <div class="goal-sub"><b>Selective</b> บังคับเลือกอย่างน้อย 1 สมรรถนะ (เลือกได้มากกว่า 1)</div>
+                <div class="goal-grid" id="mylearn-selective"></div>
+            </div>
+        </div>
+      </div>
+
+      <!-- TEAM PERFORMANCE -->
+      <div id="panel-team-performance" class="tab-panel">
+        <div class="page-header">
+          <div></div>
+          <div><div class="page-title-en">Your Team Members</div><div class="page-title-th">ลูกน้องในทีมการตลาด (Marketing)</div></div>
+        </div>
+        <div class="team-grid-wrap"><div class="members-grid" id="perf-grid"></div></div>
+      </div>
+
+      <!-- TEAM LEARNING -->
+      <div id="panel-team-learning" class="tab-panel">
+        <div class="page-header">
+          <div></div>
+          <div><div class="page-title-en">Your Team Members</div><div class="page-title-th">สถานะการเรียนรู้ของลูกน้อง</div></div>
+        </div>
+        <div id="learn-rows" style="margin-top:26px;"></div>
+      </div>
+
+      <!-- JUSTIFICATION -->
+      <div id="panel-justification" class="tab-panel subscreen" style="padding-left:0;padding-right:0;">
+        <div class="mini-header" style="margin-top:0;">
+          <div class="mini-identity">
+            <img id="just-photo" class="mini-avatar" src="" alt="">
+            <div>
+              <div class="mini-name" id="just-name"></div>
+              <div class="mini-role" id="just-role">Officer</div>
+            </div>
+          </div>
+          <div class="mini-balance">
+            <div class="mini-balance-label">Balance<span class="sub">ยอดคงเหลือ</span></div>
+            <div class="balance-pill-lg" id="just-balance">100</div>
+          </div>
+        </div>
+        <div class="fade-panel">
+          <h2 style="margin:0 0 18px;font-size:20px;">Justification <span style="font-weight:400;color:#20232c;">เหตุผลประกอบ</span></h2>
+          <div class="just-grid">
+            <div class="just-fields">
+              <div class="field-label">Topic | หัวเรื่อง</div>
+              <textarea class="lorem-box" id="just-topic-input" rows="2" placeholder="พิมพ์หัวเรื่อง..."></textarea>
+              <div class="field-label" style="margin-top:16px;">Description | คำอธิบาย</div>
+              <textarea class="lorem-box" id="just-desc-input" rows="5" placeholder="พิมพ์คำอธิบาย..."></textarea>
+            </div>
+            <div class="just-point">
+              <div class="field-label">Point | จำนวนคะแนน</div>
+              <input type="number" id="just-point-input" class="point-pill-input pos" value="10" oninput="updatePointBox(this)" style="margin-top:14px;">
+            </div>
+          </div>
+          <div class="just-actions">
+            <button class="btn-pill red" onclick="showContent('team-performance')">ยกเลิก</button>
+            <button class="btn-pill blue" onclick="submitJustification()">บันทึกและปรับคะแนน</button>
+          </div>
+        </div>
+        <button class="fab" onclick="showContent('team-performance')">กลับ</button>
+      </div>
+
+      <!-- EDIT -->
+      <div id="panel-edit" class="tab-panel subscreen" style="padding-left:0;padding-right:0;">
+        <div class="mini-header" style="margin-top:0;">
+          <div class="mini-identity">
+            <img id="edit-photo" class="mini-avatar" src="" alt="">
+            <div>
+              <div class="mini-name" id="edit-name"></div>
+              <div class="mini-role" id="edit-role">Officer</div>
+            </div>
+          </div>
+          <div class="mini-balance">
+            <div class="mini-balance-label">Balance<span class="sub">ยอดคงเหลือ</span></div>
+            <div class="balance-pill-lg" id="edit-balance">100</div>
+          </div>
+        </div>
+        <div class="fade-panel scroll" style="max-height:520px;">
+          <h2 style="margin:0 0 18px;font-size:20px;">Edit <span style="font-weight:400;color:#20232c;">แก้ไขประวัติ</span></h2>
+          <div id="edit-entries"></div>
+        </div>
+        <button class="fab" onclick="showContent('team-performance')">กลับ</button>
+      </div>
+
+    </main>
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="entry-tooltip" id="entry-tooltip"></div>
+<div class="modal-overlay" id="modal">
+  <div class="modal-card" id="modal-body"></div>
+</div>
+
+<script>
+// --- COMPETENCIES MOCK DATA ---
+const ALL_COMPETENCIES = [
+    {
+        key: 'comp_ai',
+        th: 'การใช้ AI เพื่อบริหารข้อมูลและการจัดการด้านดิจิทัล',
+        en: 'AI for Data & Digital Management',
+        desc: 'ความสามารถในการประยุกต์ใช้ปัญญาประดิษฐ์ (AI) และเครื่องมือทางดิจิทัลในการรวบรวม วิเคราะห์ และบริหารจัดการข้อมูลขนาดใหญ่ เพื่อช่วยในการตัดสินใจทางธุรกิจและเพิ่มประสิทธิภาพการทำงาน',
+        activities: [
+            ['ความเข้าใจและใช้เทคโนโลยีดิจิทัล (Digital Literacy)', 'TDGA', '#'],
+            ['การประยุกต์ใช้ AI เพื่อยกระดับการทำงานในองค์กร', 'SET', '#'],
+            ['Gemini in Google Workspace', 'AirAsia Next', '#']
+        ],
+        type: 'mandatory', tag: 'Plus One'
+    },
+    {
+        key: 'comp_eq',
+        th: 'ความฉลาดทางอารมณ์และการจัดการความเครียดในการทำงาน',
+        en: 'EQ & Workplace Stress Management',
+        desc: 'ความสามารถในการรับรู้และบริหารจัดการอารมณ์ของตนเองได้อย่างมีวุฒิภาวะ โดยเฉพาะเมื่อต้องเผชิญกับสถานการณ์ที่กดดันหรือความเปลี่ยนแปลง เพื่อรักษาสภาพจิตใจให้พร้อมปฏิบัติงาน',
+        activities: [
+            ['Perform Under Pressure', 'Airasia Academy', '#'],
+            ['ลดความเครียดจากการทำงาน ปรับสมดุลชีวิต', 'Mahidol', '#'],
+            ['Emotional Intelligence หัวใจสู่ความสำเร็จ', 'Klasssi', '#']
+        ],
+        type: 'selective', tag: 'Competency 1'
+    },
+    {
+        key: 'comp_strategy',
+        th: 'การวางแผนการตลาดเชิงกลยุทธ์และการสร้างแบรนด์',
+        en: 'Strategic Marketing & Brand Positioning',
+        desc: 'การวิเคราะห์ตลาด คู่แข่ง และพฤติกรรมผู้บริโภค เพื่อกำหนดทิศทาง วางตำแหน่งแบรนด์ และสร้างแคมเปญการตลาดที่เข้าถึงกลุ่มเป้าหมายได้อย่างมีประสิทธิภาพ',
+        activities: [
+            ['Brand Management Excellence', 'Chula MOOC', '#'],
+            ['Modern Marketing Strategy 2026', 'Coursera', '#'],
+            ['Digital Brand Storytelling', 'SkillLane', '#']
+        ],
+        type: 'selective', tag: 'Competency 2'
+    },
+    {
+        key: 'comp_analytics',
+        th: 'การวิเคราะห์ข้อมูลและการวัดผลการตลาดดิจิทัล',
+        en: 'Data Analytics for Marketers',
+        desc: 'ทักษะการดึงข้อมูล แปลผลสถิติ และการใช้เครื่องมือ Dashboard ต่างๆ เพื่อวัดผลลัพธ์ของแคมเปญการตลาด (ROI/ROAS) และนำมาปรับปรุงกลยุทธ์ได้อย่างแม่นยำ',
+        activities: [
+            ['Google Analytics 4 Advanced Course', 'Google Academy', '#'],
+            ['Data-Driven Marketing Decisions', 'edX', '#'],
+            ['Marketing Performance Dashboard Workshop', 'FutureSkill', '#']
+        ],
+        type: 'selective', tag: 'Competency 3'
+    }
+];
+
+const mockPhotos = [
+    "https://i.pravatar.cc/150?img=11", "https://i.pravatar.cc/150?img=5", "https://i.pravatar.cc/150?img=12", 
+    "https://i.pravatar.cc/150?img=16", "https://i.pravatar.cc/150?img=33", "https://i.pravatar.cc/150?img=32", 
+    "https://i.pravatar.cc/150?img=53", "https://i.pravatar.cc/150?img=47", "https://i.pravatar.cc/150?img=60", 
+    "https://i.pravatar.cc/150?img=44"
+];
+
+const getPastDate = (daysAgo) => { let d = new Date(); d.setDate(d.getDate() - daysAgo); return d.toISOString(); };
+
+// --- SINGLE UNIFIED DATA STORE FOR TEAM & EMPLOYEE ---
+let TEAM = [
+    {
+        empId: "MKT-001",
+        name: "ณัฐวุฒิ ยอดเยี่ยม",
+        position: "Performance Marketer",
+        role: "staff",
+        photoURL: mockPhotos[0],
+        balance: 130,
+        seed: "MKT-001",
+        selections: {'comp_ai': true}, // Initial: Unconfigured selective goals
+        idpDetails: { 'comp_ai': { certs: {} } },
+        recentLogs: [
+            { topic: "Optimization แคมเปญ", points: 20, desc: "ปรับลด Cost per Click ลงได้ถึง 30%", timestamp: getPastDate(2) },
+            { topic: "เข้างานตรงเวลา", points: 10, desc: "รับผิดชอบเวลาดีมาก", timestamp: getPastDate(15) }
+        ]
+    },
+    { empId: "MKT-002", name: "พิมดาว สว่างวงศ์", position: "Content Strategist", balance: 115, seed: "MKT-002", photoURL: mockPhotos[1], selections: {'comp_ai': true, 'comp_eq': true, 'comp_strategy': true}, idpDetails: {'comp_eq': {certs:{}}}, recentLogs: [{ topic: "ไอเดีย Content Viral", points: 15, desc: "คลิปมียอดวิว 1 ล้านวิวใน 3 วัน", timestamp: getPastDate(5) }] },
+    { empId: "MKT-003", name: "กิตติพงษ์ ตรงเวลา", position: "SEO Specialist", balance: 95, seed: "MKT-003", photoURL: mockPhotos[2], selections: {'comp_ai': true, 'comp_analytics': true}, idpDetails: {}, recentLogs: [{ topic: "ส่ง Report ล่าช้า", points: -5, desc: "ส่งรายงานช้า 2 วัน", timestamp: getPastDate(1) }] },
+    { empId: "MKT-004", name: "อารยา งามตา", position: "Graphic Designer", balance: 100, seed: "MKT-004", photoURL: mockPhotos[3], selections: {'comp_ai': true}, idpDetails: {}, recentLogs: [] },
+    { empId: "MKT-005", name: "ศุภชัย ใจสู้", position: "Event Coordinator", balance: 140, seed: "MKT-005", photoURL: mockPhotos[4], selections: {'comp_ai': true, 'comp_eq': true, 'comp_strategy': true}, idpDetails: {'comp_eq': {certs:{'1':{url:'#'}}}}, recentLogs: [{ topic: "จัดงาน Expo ยอดเยี่ยม", points: 30, desc: "ควบคุมงานไร้ที่ติ ลูกค้าชม", timestamp: getPastDate(10) }] },
+    { empId: "MKT-006", name: "วิลาสินี ดีเสมอ", position: "PR & Comm", balance: 105, seed: "MKT-006", photoURL: mockPhotos[5], selections: {'comp_ai': true, 'comp_strategy': true}, idpDetails: {}, recentLogs: [{ topic: "จัดการ Crisis Management", points: 15, desc: "รับมือคอมเมนต์แง่ลบได้ดี", timestamp: getPastDate(8) }] },
+    { empId: "MKT-007", name: "ธนภูมิ ภูมิใจ", position: "CRM Analyst", balance: 120, seed: "MKT-007", photoURL: mockPhotos[6], selections: {'comp_ai': true, 'comp_analytics': true}, idpDetails: {'comp_ai': {certs:{'0':{url:'#'}}}}, recentLogs: [{ topic: "สร้าง Dashboard อัตโนมัติ", points: 20, desc: "ลดเวลาทำรีพอร์ต 3 ชม.", timestamp: getPastDate(4) }] },
+    { empId: "MKT-008", name: "รัตนา หาญกล้า", position: "Social Admin", balance: 110, seed: "MKT-008", photoURL: mockPhotos[7], selections: {'comp_ai': true, 'comp_eq': true}, idpDetails: {}, recentLogs: [{ topic: "Engagement เพจเติบโต", points: 10, desc: "ปฏิสัมพันธ์เพจดีมาก", timestamp: getPastDate(6) }] },
+    { empId: "MKT-009", name: "เอกลักษณ์ รักงาน", position: "Video Editor", balance: 90, seed: "MKT-009", photoURL: mockPhotos[8], selections: {'comp_ai': true, 'comp_eq': true}, idpDetails: {}, recentLogs: [{ topic: "ส่งงานวิดีโอมีจุดผิดพลาด", points: -10, desc: "ลืมใส่โลโก้สปอนเซอร์", timestamp: getPastDate(1) }] },
+    { empId: "MKT-010", name: "ชลลดา มาดี", position: "Marketing Intern", balance: 100, seed: "MKT-010", photoURL: mockPhotos[9], selections: {'comp_ai': true}, idpDetails: {}, recentLogs: [] }
+];
+
+// Manager Data
+let MOCK_MANAGER = {
+    name: "Demo Manager",
+    position: "Marketing Manager",
+    role: "manager",
+    photoURL: "https://i.pravatar.cc/150?img=68",
+    balance: 150,
+    seed: "me",
+    selections: {'comp_ai': true, 'comp_eq': true, 'comp_strategy': true, 'comp_analytics': true},
+    idpDetails: {
+        'comp_ai': { certs: {'0': {url:'#', name:'cert_ai.pdf', reflection:'นำ AI มาประยุกต์ใช้วิเคราะห์ข้อมูลการตลาดยอดเยี่ยม'}}},
+        'comp_eq': { certs: {'0': {url:'#', name:'cert_eq.pdf', reflection:'ได้เทคนิคบริหารจัดการอารมณ์ทีมในช่วงงานเร่งด่วน'}}}
+    },
+    recentLogs: [
+        { topic: "ยอดขายทะลุเป้า Q3", points: 30, desc: "ทีมทำงานร่วมกันได้ดีมาก ปิดยอดได้ 120%", timestamp: getPastDate(5) },
+        { topic: "ทำแผน IDP ให้ทีมครบถ้วน", points: 20, desc: "ผลักดันให้ลูกน้องทุกคนมีเป้าหมายที่ชัดเจน", timestamp: getPastDate(12) }
+    ]
+};
+
+let CURRENT_ROLE = 'staff_new';
+let ME = TEAM[0]; // TEAM[0] (ณัฐวุฒิ) IS THE MOCKED EMPLOYEE VIEW!
+let CURRENT_MEMBER_ENTRIES = [];
+let currentTabId = 'my-learning';
+let currentMemberIdx = 0;
+let editingIdx = null;
+let modalCtx = null;
+let expandedActivity = null;
+
+// --- INITIALIZE UI WITH LOGO FALLBACK ---
+window.onload = () => {
+    renderLogos();
+    setTimeout(() => { 
+        document.getElementById('scr-loading').classList.remove('active'); 
+        document.getElementById('scr-login').classList.add('active'); 
+    }, 400);
+};
+
+function renderLogos() {
+    const imgUrl = 'https://img1.pic.in.th/images/logocf8c43517981bfe3.png';
+    const fallbackSvgBig = `<svg class="logo-img" width="60" height="38" viewBox="0 0 66 42"><defs><radialGradient id="g1b" cx="30%" cy="30%" r="80%"><stop offset="0%" stop-color="#ffb648"/><stop offset="55%" stop-color="#ff5a3c"/><stop offset="100%" stop-color="#ff2f2f"/></radialGradient></defs><circle cx="18" cy="21" r="18" fill="url(#g1b)"/><circle cx="48" cy="21" r="18" fill="url(#g1b)"/></svg>`;
+    const fallbackSvgSmall = `<svg class="logo-img" width="26" height="17" viewBox="0 0 66 42"><defs><radialGradient id="g1s" cx="30%" cy="30%" r="80%"><stop offset="0%" stop-color="#ffb648"/><stop offset="55%" stop-color="#ff5a3c"/><stop offset="100%" stop-color="#ff2f2f"/></radialGradient></defs><circle cx="18" cy="21" r="18" fill="url(#g1s)"/><circle cx="48" cy="21" r="18" fill="url(#g1s)"/></svg>`;
+
+    document.querySelectorAll('.logo-slot').forEach(el => {
+        const isBig = el.dataset.size === 'big';
+        const img = new Image();
+        img.src = imgUrl;
+        img.className = 'logo-img';
+        img.alt = 'StarMeter';
+        img.onload = () => { el.innerHTML = ''; el.appendChild(img); };
+        img.onerror = () => {
+            el.innerHTML = (isBig ? fallbackSvgBig : fallbackSvgSmall) + `<span class="wordmark">StarMeter</span>`;
+        };
+    });
+}
+
+// Cookie Accordion Toggle
+window.toggleCookieInfo = function() {
+    const content = document.getElementById('cookie-content');
+    const chevron = document.getElementById('cookie-chevron');
+    if (content.classList.contains('show')) {
+        content.classList.remove('show');
+        chevron.classList.replace('fa-chevron-up', 'fa-chevron-down');
+    } else {
+        content.classList.add('show');
+        chevron.classList.replace('fa-chevron-down', 'fa-chevron-up');
+    }
+};
+
+// --- GOOGLE AUTH MODAL CONTROLLER ---
+window.triggerGoogleAuthModal = () => {
+    document.getElementById('google-auth-modal').classList.add('active');
+};
+
+window.selectGoogleAccount = (role) => {
+    document.getElementById('google-auth-modal').classList.remove('active');
+    document.getElementById('scr-login').classList.remove('active');
+    document.getElementById('scr-app').classList.remove('active');
+    document.getElementById('scr-loading').classList.add('active');
+
+    const emailText = (role === 'staff_new') ? 'nattawut.y@airasia.com' : 'manager.mkt@airasia.com';
+    document.getElementById('loading-text-main').textContent = `กำลังเข้าสู่ระบบผ่าน ${emailText}...`;
+    document.getElementById('loading-subtext-main').textContent = `Authenticating Google Account & Syncing Dashboard`;
+
+    setTimeout(() => {
+        document.getElementById('scr-loading').classList.remove('active');
+        switchDemoRole(role);
+    }, 700);
+};
+
+// --- SWITCH DEMO ROLE WITH DYNAMIC SYNC ---
+window.switchDemoRole = (role) => {
+    CURRENT_ROLE = role;
+    ME = (role === 'staff_new') ? TEAM[0] : MOCK_MANAGER;
+
+    // Update Header Info
+    document.getElementById('header-name').textContent = ME.name;
+    document.getElementById('header-role').textContent = ME.position;
+    document.getElementById('header-avatar').src = ME.photoURL;
+    document.getElementById('me-avatar-img').src = ME.photoURL;
+    document.getElementById('me-name-text').textContent = ME.name;
+    document.getElementById('me-role-text').textContent = ME.position;
+
+    // Build Role Tabs
+    let tabHtml = '<span class="tab-indicator" id="tab-indicator"></span>' + 
+        `<button class="tab-btn" data-tab="my-performance" onclick="showContent('my-performance')"><span>My Performance</span><span class="th-sub">ผลงานของฉัน</span></button>` +
+        `<button class="tab-btn" data-tab="my-learning" onclick="showContent('my-learning')"><span>My Learning</span><span class="th-sub">การเรียนรู้ของฉัน</span></button>`;
+    
+    if (role === 'manager') {
+        tabHtml += `<button class="tab-btn" data-tab="team-performance" onclick="showContent('team-performance')"><span>Team's Performance</span><span class="th-sub">ผลงานทีม</span></button>` +
+                   `<button class="tab-btn" data-tab="team-learning" onclick="showContent('team-learning')"><span>Team's Learning</span><span class="th-sub">การเรียนรู้ทีม</span></button>`;
+    }
+
+    document.getElementById('tabbar-desktop').innerHTML = tabHtml;
+
+    // Show App Screen
+    document.getElementById('scr-app').classList.add('active');
+
+    // Default tab
+    const defaultTab = (role === 'staff_new') ? 'my-learning' : 'team-performance';
+    showContent(defaultTab);
+};
+
+window.handleLogout = () => {
+    document.getElementById('scr-app').classList.remove('active');
+    document.getElementById('scr-login').classList.add('active');
+};
+
+window.escapeAttr = (s) => String(s).replace(/"/g,'&quot;');
+window.escapeHtml = (s) => String(s).replace(/&/g,'&amp;').replace(/</g,'&gt;');
+window.showToast = (msg) => {
+    // Disabled to prevent blocking the presentation view
+    // console.log("Toast hidden:", msg);
+};
+
+window.showContent = (id) => {
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('panel-'+id).classList.add('active');
+    
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    const btn = document.querySelector(`.tabbar-desktop .tab-btn[data-tab="${id}"]`);
+    if(btn) {
+        btn.classList.add('active');
+        const indicator = document.getElementById('tab-indicator');
+        indicator.style.left = btn.offsetLeft + 'px';
+        indicator.style.width = btn.offsetWidth + 'px';
+    }
+
+    if(id === 'my-performance') renderMyPerformance();
+    if(id === 'my-learning') renderMyLearning();
+    if(id === 'team-performance') renderPerfGrid(1);
+    if(id === 'team-learning') renderLearnRows(1);
+    window.scrollTo(0,0);
+};
+
+// --- RENDER LOGIC ---
+window.renderMyPerformance = () => {
+    document.getElementById('me-balance').textContent = ME.balance;
+    const list = document.getElementById('my-perf-list');
+    list.innerHTML = ME.recentLogs.map(e => `
+    <div class="entry-card">
+      <div class="fade-entry-top">
+        <div class="col"><div class="fade-colname">Topic | หัวเรื่อง</div><div class="fade-topic ${e.points>=0?'g':'r'}">${escapeHtml(e.topic)}</div></div>
+        <div class="fade-point ${e.points>=0?'g':'r'}">${e.points>=0?'+':''}${e.points}</div>
+      </div>
+      <div class="fade-desc"><div class="fade-colname">Description | คำอธิบาย</div>${escapeHtml(e.desc)}</div>
+    </div>`).join('');
+};
+
+window.renderMyLearning = () => {
+    const renderCard = (c) => {
+        const active = c.type === 'mandatory' || ME.selections[c.key];
+        const isComp = Object.values(ME.idpDetails[c.key]?.certs || {}).some(cert => cert.url && cert.reflection);
+        const colorClass = c.type === 'mandatory' ? 'blue' : 'green';
+        return `<button class="goal-card ${colorClass} ${active?'selected':''}" onclick="openCompetency('${c.key}', true, 'me')">
+          <div class="tag" style="padding-right:70px;">${c.tag}</div>
+          ${isComp ? `<div class="badge-complete">Complete ✓</div>` : ''}
+          <div class="th-name">${c.th}</div><div class="en-name">${c.en}</div>
+          <div class="desc">${c.desc.slice(0,90)}…</div><div class="arrow">↘</div>
+        </button>`;
+    };
+    document.getElementById('mylearn-mandatory').innerHTML = ALL_COMPETENCIES.filter(c=>c.type==='mandatory').map(renderCard).join('');
+    document.getElementById('mylearn-selective').innerHTML = ALL_COMPETENCIES.filter(c=>c.type==='selective').map(renderCard).join('');
+};
+
+window.renderPerfGrid = (page) => {
+    const grid = document.getElementById('perf-grid');
+    grid.innerHTML = TEAM.map((m, i) => {
+        let logsHtml = m.recentLogs.length > 0 ? m.recentLogs.map(e=>`<span class="entry-item ${e.points>=0?'g':'r'}" data-desc="${escapeAttr(e.desc)}" data-points="${e.points}">${escapeHtml(e.topic)}</span>`).join('') : '<span style="color:#9aa0ae; font-size:11px;">ยังไม่มีประวัติ</span>';
+        return `
+        <div class="member-card">
+          <div class="member-top"><img class="member-photo" src="${m.photoURL}"><div class="member-name-wrap"><div class="member-name">${m.name}</div><div class="member-role-id">${m.position} | ${m.empId}</div></div></div>
+          <div class="member-stats">
+            <div class="stat"><div class="balance-pill">${m.balance}</div><div class="label-en">Balance</div><div class="label-th">ยอดคงเหลือ</div></div>
+            <div class="stat"><button class="round-btn blue" onclick="openJustification(${i})">★</button><div class="label-en">Point</div><div class="label-th">ให้คะแนน</div></div>
+            <div class="stat"><button class="round-btn blue-lt" onclick="openEdit(${i})">✎</button><div class="label-en">Edit</div><div class="label-th">แก้ไข</div></div>
+          </div>
+          <div class="entry-list">${logsHtml}</div>
+        </div>`;
+    }).join('');
+};
+
+window.renderLearnRows = () => {
+    const wrap = document.getElementById('learn-rows');
+    wrap.innerHTML = TEAM.map(m => {
+        const chips = ALL_COMPETENCIES.map(c => {
+            const isMan = c.type === 'mandatory';
+            const active = isMan || m.selections[c.key];
+            const cls = isMan ? 'plus' : (active ? 'on' : 'off');
+            const isComp = Object.values(m.idpDetails[c.key]?.certs || {}).some(cert => cert.url && cert.reflection);
+            const compText = isComp ? ' <span style="color:var(--green-dark);">✓</span>' : '';
+            return `<button class="comp-chip ${cls}" onclick="openCompetency('${c.key}', false, '${m.seed}')"><span class="en">${c.tag}${compText}</span>${c.th.slice(0,26)}…<span class="arrow">↘</span></button>`;
+        }).join('');
+        return `<div class="lteam-block"><div class="lteam-row"><div class="lteam-head"><img src="${m.photoURL}"><div class="lteam-name-wrap"><div class="lteam-name">${m.name}</div><div class="lteam-role-id">${m.position} | ${m.empId}</div></div></div><div class="comp-chips">${chips}</div></div></div>`;
+    }).join('');
+};
+
+window.openJustification = (i) => {
+    currentMemberIdx = i; const m = TEAM[i];
+    document.getElementById('just-photo').src = m.photoURL; document.getElementById('just-name').textContent = m.name;
+    document.getElementById('just-role').textContent = m.position; document.getElementById('just-balance').textContent = m.balance;
+    document.getElementById('just-topic-input').value = ''; document.getElementById('just-desc-input').value = ''; document.getElementById('just-point-input').value = 10;
+    updatePointBox(document.getElementById('just-point-input'));
+    showContent('justification');
+};
+
+window.updatePointBox = (input) => {
+    const val = parseInt(input.value||'0',10);
+    input.classList.toggle('pos', val>=0); input.classList.toggle('neg', val<0);
+};
+
+// MANAGER JUSTIFICATIONS IMMEDIATELY SYNC TO EMPLOYEE!
+window.submitJustification = () => {
+    const topic = document.getElementById('just-topic-input').value.trim();
+    const desc = document.getElementById('just-desc-input').value.trim();
+    const val = parseInt(document.getElementById('just-point-input').value || '0', 10);
+    if (!topic) return Swal.fire({ text: 'กรุณากรอกหัวเรื่อง (Topic)', icon: 'warning' });
+    
+    // Updates TEAM[i] directly
+    TEAM[currentMemberIdx].balance += val;
+    TEAM[currentMemberIdx].recentLogs.unshift({ topic, points: val, desc, timestamp: new Date().toISOString() });
+    
+    const targetName = TEAM[currentMemberIdx].name;
+    Swal.fire({ 
+        title: 'ให้คะแนนสำเร็จ!',
+        text: `ปรับคะแนนให้ ${targetName} (${val>=0?'+':''}${val} คะแนน) ข้อมูลจะซิงค์ไปหน้า Dashboard ของพนักงานทันที`, 
+        icon: 'success', 
+        confirmButtonColor: '#0091ff' 
+    });
+    showContent('team-performance');
+};
+
+window.openEdit = (i) => {
+    currentMemberIdx = i; const m = TEAM[i];
+    document.getElementById('edit-photo').src = m.photoURL; document.getElementById('edit-name').textContent = m.name;
+    document.getElementById('edit-role').textContent = m.position; document.getElementById('edit-balance').textContent = m.balance;
+    CURRENT_MEMBER_ENTRIES = [...m.recentLogs];
+    renderEditEntries();
+    showContent('edit');
+};
+
+window.renderEditEntries = () => {
+    const wrap = document.getElementById('edit-entries');
+    if (CURRENT_MEMBER_ENTRIES.length === 0) { wrap.innerHTML = `<div style="text-align:center; color:#9aa0ae; padding:40px;">ไม่มีประวัติให้แก้ไข</div>`; return; }
+    wrap.innerHTML = `<div class="edit-table-head"><div>Topic</div><div>Description</div><div>Point</div></div>` + CURRENT_MEMBER_ENTRIES.map((e,idx)=>{
+        if(editingIdx===idx) {
+            return `<div class="edit-table-row"><div class="edit-table-editrow"><div class="fade-entry-top"><div class="col"><input class="edit-input-topic" id="edit-topic-${idx}" value="${escapeAttr(e.topic)}" style="width:100%;border-radius:8px;padding:7px;font-weight:700;"></div><div><input type="number" value="${e.points}" disabled style="width:100px;border-radius:8px;padding:7px;text-align:right;"></div></div><div class="fade-desc"><textarea id="edit-desc-${idx}" rows="2" style="width:100%;border-radius:8px;padding:8px;">${escapeHtml(e.desc)}</textarea></div><div class="edit-actions" style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px;"><button class="btn-chip gray" onclick="editingIdx=null;renderEditEntries();">ยกเลิก</button><button class="btn-chip blue" onclick="saveEditFull(${idx})">บันทึก</button></div></div></div>`;
+        }
+        return `<div class="edit-table-row"><button class="edit-table-topic ${e.points>=0?'g':'r'}" onclick="editingIdx=${idx};renderEditEntries();">${escapeHtml(e.topic)}</button><div class="edit-table-desc">${escapeHtml(e.desc)}</div><div class="edit-table-point">${e.points>=0?'+':''}${e.points}</div></div>`;
+    }).join('');
+};
+
+window.saveEditFull = (idx) => {
+    TEAM[currentMemberIdx].recentLogs[idx].topic = document.getElementById(`edit-topic-${idx}`).value;
+    TEAM[currentMemberIdx].recentLogs[idx].desc = document.getElementById(`edit-desc-${idx}`).value;
+    editingIdx = null; renderEditEntries(); 
+};
+
+// EMPLOYEE GOAL SELECTION SYNCED DIRECTLY TO TEAM DATA!
+window.toggleSelection = (key) => {
+    if(ME.selections[key]) {
+        delete ME.selections[key];
+    } else {
+        ME.selections[key] = true;
+        if(!ME.idpDetails[key]) ME.idpDetails[key] = {certs:{}};
+    }
+    renderModalBody(); renderMyLearning();
+};
+
+window.openCompetency = (key, interactive, scope) => {
+    modalCtx = {key, interactive, scope}; expandedActivity = null;
+    renderModalBody(); document.getElementById('modal').classList.add('active');
+};
+window.closeModal = () => { document.getElementById('modal').classList.remove('active'); };
+window.toggleActivity = (i) => { expandedActivity = (expandedActivity===i) ? null : i; renderModalBody(); };
+
+// EMPLOYEE LIVE UPLOAD & REFLECTION SYNCED DIRECTLY!
+window.handleDemoUpload = (event, i) => {
+    const file = event.target.files[0];
+    if(!file) return;
+    const {key} = modalCtx;
+    if(!ME.idpDetails[key]) ME.idpDetails[key] = {certs:{}};
+    ME.idpDetails[key].certs[i] = { url: '#', name: file.name, reflection: '' };
+    renderModalBody(); renderMyLearning();
+};
+
+window.saveDemoReflection = (i) => {
+    const text = document.getElementById(`reflection-input-${i}`).value.trim();
+    if(!text) return Swal.fire({ text: 'กรุณาพิมพ์ผลประเมินก่อนบันทึก', icon: 'warning' });
+    const {key} = modalCtx;
+    if(!ME.idpDetails[key].certs[i]) ME.idpDetails[key].certs[i] = { url: '#' };
+    ME.idpDetails[key].certs[i].reflection = text;
+    renderModalBody(); renderMyLearning();
+};
+
+window.renderModalBody = () => {
+    const {key, interactive, scope} = modalCtx;
+    let target = scope === 'me' ? ME : TEAM.find(t=>t.seed===scope);
+    const c = ALL_COMPETENCIES.find(x=>x.key===key);
+    const details = target.idpDetails[key] || {};
+    const isSelected = c.type === 'mandatory' || !!target.selections[key];
+    
+    const body = document.getElementById('modal-body');
+    body.className = `modal-card ${c.type}`;
+    if(isSelected) body.classList.add('selected');
+
+    let topRightToggle = '';
+    if (c.type==='mandatory') {
+        topRightToggle = `<div class="top-right-status mandatory"><i class="fa-solid fa-check"></i> เลือกสมรรถนะเรียบร้อย</div>`;
+    } else {
+        if (scope === 'me') {
+            if (isSelected) topRightToggle = `<button class="top-right-status selective-selected" onclick="toggleSelection('${key}')"><i class="fa-solid fa-check"></i> เลือกสมรรถนะเรียบร้อย</button>`;
+            else topRightToggle = `<button class="top-right-status selective-unselected" onclick="toggleSelection('${key}')">คลิกเพื่อเลือกสมรรถนะ</button>`;
+        } else {
+            topRightToggle = `<div class="top-right-status ${isSelected?'selective-selected':'selective-unselected'}">${isSelected ? '<i class="fa-solid fa-check"></i> เลือกสมรรถนะเรียบร้อย' : 'ยังไม่ได้เลือก'}</div>`;
+        }
+    }
+
+    let activitiesHtml = c.activities.map((a,i) => {
+        const expanded = expandedActivity===i;
+        const certInfo = details?.certs?.[i];
+        const step3 = !!certInfo?.reflection;
+        
+        let upBtn = (interactive && isSelected && scope==='me') ? `
+            <div style="margin-top:10px;">
+                <label class="cert-upload">
+                    <i class="fa-regular fa-file"></i> ${certInfo?.name ? 'เปลี่ยนไฟล์ใบประกาศฯ' : 'Upload Certificate (PDF, PNG, JPG)'}
+                    <input type="file" style="display:none" onchange="handleDemoUpload(event, '${i}')">
+                </label>
+            </div>` : '';
+
+        let actionBtn = (interactive && scope==='me' && certInfo?.name && !step3) ? 
+            `<button class="btn-acc-action ${c.type==='mandatory'?'blue':'green'}" onclick="saveDemoReflection('${i}')">บันทึกผลประเมิน</button><div class="clear-float"></div>` : '';
+
+        return `
+        <div class="activity-item">
+          <div class="activity-box">
+            <div class="activity-row" onclick="toggleActivity(${i})">
+              <div class="title" style="flex:1;"><span style="color:var(--blue); font-weight:600;"><i class="fa-solid fa-desktop"></i> ${a[0]}</span></div>
+              <div class="activity-provider">โดย ${a[1]} <i class="fa-solid fa-caret-${expanded?'up':'down'}"></i></div>
+            </div>
+            ${expanded ? `
+              <div class="activity-detail">
+                ${upBtn}
+                ${certInfo?.name ? `<div class="file-status"><i class="fa-solid fa-file-contract"></i> ${escapeHtml(certInfo.name)}</div>` : ''}
+                <textarea id="reflection-input-${i}" class="reflection-box" ${(!interactive || scope!=='me' || !certInfo?.name) ? 'disabled' : ''} placeholder="${certInfo?.name ? 'อธิบายการประเมินผลลัพธ์ทางการเรียนรู้ (สูงสุด 150 คำ)' : 'กรุณาแนบไฟล์ใบประกาศฯ ก่อนพิมพ์คำอธิบาย'}">${certInfo?.reflection||''}</textarea>
+                ${actionBtn}
+              </div>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+
+    const certs = details?.certs || {};
+    const step1Done = isSelected;
+    const step2Done = Object.values(certs).some(c => c.name || c.url);
+    const step3Done = Object.values(certs).some(c => (c.name || c.url) && c.reflection);
+    const tColor = c.type==='mandatory' ? 'blue' : 'green';
+
+    const s1Class = step1Done ? `${tColor}-active` : '';
+    const s2Class = step2Done ? `${tColor}-active` : '';
+    const s3Class = step3Done ? `${tColor}-active` : '';
+
+    body.innerHTML = `
+      <button class="modal-close-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px;padding-right:30px;">
+        <div class="tag">${c.tag}</div>
+        ${topRightToggle}
+      </div>
+      <h2>${c.th}</h2><h3>${c.en}</h3>
+      <div class="desc">${c.desc}</div>
+      <div class="section-label">Activity | ช่องทางการเรียนรู้ <span class="right">สามารถเลือกเรียนอย่างน้อย 1 หลักสูตร</span></div>
+      <div>${activitiesHtml}</div>
+      <div class="stepper-wrapper">
+        <div class="step-item ${s1Class}"><div class="step-dash"></div><div class="step-label">เลือกสมรรถนะ</div></div>
+        <div class="step-item ${s2Class}"><div class="step-dash"></div><div class="step-label">แนบใบประกาศฯ</div></div>
+        <div class="step-item ${s3Class}"><div class="step-dash"></div><div class="step-label">บันทึกผลประเมิน</div></div>
+      </div>
+    `;
+};
+
+// Tooltip Logic
+const entryTip = document.getElementById('entry-tooltip');
+document.addEventListener('mouseover', (e)=>{ const el = e.target.closest('.entry-item'); if(!el) return; const pts = parseInt(el.dataset.points, 10); entryTip.innerHTML = `<div class="tip-desc">${escapeHtml(el.dataset.desc)}</div><div class="tip-points ${pts>=0?'g':'r'}">${pts>0?'+':''}${pts} pts</div>`; entryTip.classList.add('show'); entryTip.style.left = e.clientX+14+'px'; entryTip.style.top = e.clientY+14+'px';});
+document.addEventListener('mousemove', (e)=>{ if(entryTip.classList.contains('show')){ entryTip.style.left = e.clientX+14+'px'; entryTip.style.top = e.clientY+14+'px';} });
+document.addEventListener('mouseout', (e)=>{ if(e.target.closest('.entry-item')) entryTip.classList.remove('show'); });
+</script>
+</body>
+</html>
