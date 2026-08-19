@@ -41,6 +41,7 @@
   .demo-role-btn { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 4px 14px; border-radius: 14px; font-size: 12px; font-weight: 700; transition: all 0.2s; }
   .demo-role-btn:hover, .demo-role-btn.active { background: var(--blue); border-color: var(--blue); color: #fff; transform: translateY(-1px); }
 
+  body.has-demo-bar #app { padding-top: 42px; }
   body.has-demo-bar .app-header { top: 42px; }
 
   /* ===== Loading Spinner ===== */
@@ -85,7 +86,7 @@
   .accordion-content li { margin-bottom: 6px; line-height: 1.5; }
 
   /* ===== Mock Google Auth Popup Modal ===== */
-  .google-auth-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 999999; padding: 20px; backdrop-filter: blur(3px); }
+  .google-auth-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 100000; padding: 20px; backdrop-filter: blur(3px); }
   .google-auth-overlay.active { display: flex; }
   .google-auth-card { background: #fff; border-radius: 24px; max-width: 440px; width: 100%; padding: 36px 32px 28px; box-shadow: 0 24px 48px rgba(0,0,0,0.2); text-align: center; position: relative; animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
   @keyframes popIn { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -103,7 +104,7 @@
   .badge-manager { background: #eaf6fc; color: #0077d6; }
 
   /* ===== App Shell ===== */
-  .app-header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 40px;border-bottom:1px solid var(--gray-line);position:sticky;top:42px;background:#fff;z-index:40;}
+  .app-header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 40px;border-bottom:1px solid var(--gray-line);position:sticky;background:#fff;z-index:40;}
   .tabbar-desktop{position:relative;display:flex;gap:4px;}
   .tabbar-desktop .tab-btn{background:none;border:none;padding:10px 18px;font-weight:600;font-size:13.5px;color:#6a6f7c;border-radius:10px;position:relative;z-index:1;transition:color .2s ease,background .2s ease;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.3;}
   .tabbar-desktop .tab-btn:hover{background:#f4f5f7;}
@@ -264,13 +265,9 @@
   .modal-card.selective { background: #ffffff; border: 2px solid var(--green-select); }
   .modal-card.selective.selected { background: #f2fcf5; border: none; }
 
+  /* Header Top Layout */
+  .modal-header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-right: 36px; gap: 10px; }
   .modal-card .tag{font-size:16px; font-weight:800; color:#1c2130; margin-bottom:0;} 
-  .modal-card h2{font-size:20px;margin:0 0 6px;color:#1c2130; line-height: 1.4;}
-  .modal-card h3{font-size:16px;margin:0 0 14px;color:#1c2130; font-weight: 700;}
-  .modal-card .desc{font-size:12.5px;color:#5a5f6c;line-height:1.6; margin-bottom: 24px;}
-  
-  .section-label{font-size:13px; color:#1c2130; display:flex; justify-content:space-between; align-items:flex-end; border-bottom: 1px dashed #d1d5db; padding-bottom: 12px; margin-bottom: 16px;}
-  .section-label span.right { font-size:11px; color:#7a8090; font-weight: normal; }
   
   .top-right-status { border-radius: 20px; padding: 8px 18px; font-weight: 700; font-size: 13.5px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; border: none; cursor: pointer; }
   .top-right-status.mandatory { background: var(--blue); color: #fff; cursor: default; }
@@ -278,6 +275,13 @@
   .modal-card.selective .top-right-status.completed { background: var(--green-select); color: #fff; }
   .modal-card.selective .top-right-status.selective-unselected { background: #fff; border: 1px solid var(--green-select); color: var(--green-select); }
 
+  .modal-card h2{font-size:20px;margin:0 0 6px;color:#1c2130; line-height: 1.4;}
+  .modal-card h3{font-size:16px;margin:0 0 14px;color:#1c2130; font-weight: 700;}
+  .modal-card .desc{font-size:12.5px;color:#5a5f6c;line-height:1.6; margin-bottom: 24px;}
+  
+  .section-label{font-size:13px; color:#1c2130; display:flex; justify-content:space-between; align-items:flex-end; border-bottom: 1px dashed #d1d5db; padding-bottom: 12px; margin-bottom: 16px;}
+  .section-label span.right { font-size:11px; color:#7a8090; font-weight: normal; }
+  
   .activity-box { border: 1px solid #d1d5db; border-radius: 12px; margin-bottom: 16px; background: #fff; overflow: hidden; transition: box-shadow 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.02);}
   .activity-box:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
   .activity-row{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;cursor:pointer; padding: 18px 20px; transition: background 0.2s;}
@@ -313,9 +317,10 @@
      ========================================================= */
   @media (max-width: 640px) {
     /* Top Demo Bar */
-    .demo-bar { height: auto; flex-direction: column; padding: 10px 16px; gap: 10px; }
+    .demo-bar { height: 88px; flex-direction: column; justify-content: center; align-items: center; padding: 8px 16px; gap: 8px; }
     .demo-btn-group { flex-wrap: wrap; justify-content: center; width: 100%; }
-    body.has-demo-bar .app-header { top: 82px; }
+    body.has-demo-bar #app { padding-top: 88px; }
+    body.has-demo-bar .app-header { top: 88px; }
 
     /* Login Portal */
     .portal-grid { grid-template-columns: 1fr; margin-top: 16px; }
@@ -329,7 +334,7 @@
     .subscreen{padding:20px 16px 110px;}
     
     /* Bottom Navigation Tab Bar for Mobile */
-    .tabbar-mobile{display:flex;position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--gray-line);padding:6px 4px max(6px, env(safe-area-inset-bottom));z-index:100;box-shadow:0 -4px 16px rgba(0,0,0,.06);}
+    .tabbar-mobile{display:flex;position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--gray-line);padding:6px 4px max(6px, env(safe-area-inset-bottom));z-index:10;box-shadow:0 -4px 16px rgba(0,0,0,.06);}
     .tabbar-mobile .tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;padding:6px 2px;font-size:10px;color:#9aa0ae;transition:color .2s ease;}
     .tabbar-mobile .tab-btn .ic{font-size:19px;transition:transform .2s ease;}
     .tabbar-mobile .tab-btn.active{color:var(--blue);}
@@ -353,16 +358,27 @@
     .comp-chips{display:flex; flex-direction: column; gap:8px;}
 
     /* Modals */
-    .modal-overlay{padding:16px;} 
+    .modal-overlay{padding:16px; z-index:100000;} 
     .modal-card{padding:34px 20px 24px; border-radius:22px; max-height:85vh; width:100%; max-width:100%;} 
     .modal-close-btn { top: 16px; right: 16px; }
-    .top-right-status { position: static; display: flex; justify-content: center; width: 100%; margin-bottom: 16px; }
+    
+    /* Fix: Header wrap on mobile */
+    .modal-header-top { flex-direction: column; gap: 12px; padding-right: 30px; }
+    .top-right-status { width: auto; align-self: flex-start; margin-bottom: 0; padding: 6px 12px; font-size: 12px; }
+    
+    /* Fix: Section label wrap on mobile */
+    .section-label { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .section-label span.right { align-self: flex-start; }
+
     .activity-row { flex-direction: column; padding: 14px 16px; }
     .activity-provider { margin-top: 8px; }
-    .stepper-wrapper { flex-direction: column; align-items: flex-start; gap: 16px; }
-    .step-item { flex-direction: row; align-items: center; width: 100%; }
-    .step-dash { width: 40px; height: 6px; }
     .btn-acc-action { width: 100%; text-align: center; }
+
+    /* Stepper Mobile */
+    .stepper-wrapper { flex-direction: row; margin-top: 24px; padding-top: 16px; gap: 8px; }
+    .step-item { flex-direction: column; align-items: center; width: auto; }
+    .step-dash { height: 6px; width: 100%; }
+    .step-label { font-size: 10px; }
   }
 </style>
 </head>
@@ -1098,7 +1114,7 @@ window.renderModalBody = () => {
 
     body.innerHTML = `
       <button class="modal-close-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
-      <div style="display:flex;justify-content:space-between;margin-bottom:12px;padding-right:30px;">
+      <div class="modal-header-top">
         <div class="tag">${c.tag}</div>
         ${topRightToggle}
       </div>
