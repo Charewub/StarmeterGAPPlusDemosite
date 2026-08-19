@@ -61,7 +61,7 @@
   .logo-slot[data-size="big"] .logo-img{height:80px;width:auto;}
   .subtitle{font-size:18px;color:#333;margin-top:2px;font-weight:500;}
 
-  /* ===== Google Login Button (FIXED) ===== */
+  /* ===== Google Login Button ===== */
   .google-btn {
     display: flex; align-items: center; justify-content: center; gap: 10px; width: min(340px, 100%);
     background: #fff; border: 1px solid #dadce0; border-radius: 24px; padding: 12px 20px;
@@ -117,6 +117,7 @@
   .header-role{font-size:11px;color:#9aa0ae;text-align:right;}
   .logout-link{background:none;border:none;font-size:11.5px;color:var(--red);font-weight:700;}
 
+  .tabbar-mobile{display:none;}
   main#tab-content{padding:32px 56px 90px;position:relative;}
   .tab-panel{display:none;}
   .tab-panel.active{display:block;opacity:1;transform:translateY(0);transition:opacity .22s ease, transform .22s ease;}
@@ -125,10 +126,6 @@
   .toast{position:fixed;top:60px;left:50%;transform:translateX(-50%) translateY(-14px);background:var(--navy-dark);color:#fff;font-size:13.5px;font-weight:600;padding:13px 22px;border-radius:12px;box-shadow:0 10px 26px rgba(0,0,0,.25);z-index:99999;opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;max-width:90vw;text-align:center;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   .toast.success{background:var(--green-dark);}
-
-  .fab{position:fixed;bottom:30px;right:calc(50% - 624px);background:var(--blue);color:#fff;border:none;padding:11px 26px;border-radius:24px;font-weight:700;font-size:14px;box-shadow:0 6px 16px rgba(0,145,255,.35);transition:transform .15s ease;}
-  .fab:hover{transform:translateY(-2px);}
-  @media (max-width:1360px){.fab{right:30px;}}
 
   .page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-top:6px;margin-bottom:8px;}
   .page-title-en{font-size:15px;color:#9aa0ae;text-align:right;}
@@ -307,6 +304,62 @@
   .step-item.green-active .step-dash { background: var(--green-select); }
   .step-item.green-active .step-label { color: var(--green-select); }
 
+  /* =========================================================
+     MOBILE RESPONSIVE (ADDED BACK) 
+     ========================================================= */
+  @media (max-width: 640px) {
+    /* Top Demo Bar */
+    .demo-bar { height: auto; flex-direction: column; padding: 10px 16px; gap: 10px; }
+    .demo-btn-group { flex-wrap: wrap; justify-content: center; width: 100%; }
+    body.has-demo-bar .app-header { top: 82px; }
+
+    /* Login Portal */
+    .portal-grid { grid-template-columns: 1fr; margin-top: 16px; }
+    .google-auth-card { padding: 24px 20px 20px; border-radius: 18px; }
+
+    /* App Shell */
+    .app-header{padding:14px 16px;}
+    .tabbar-desktop{display:none;}
+    .header-name, .header-role{display:none;}
+    main#tab-content{padding:20px 16px 96px;}
+    .subscreen{padding:20px 16px 110px;}
+    
+    /* Bottom Navigation Tab Bar for Mobile */
+    .tabbar-mobile{display:flex;position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--gray-line);padding:6px 4px max(6px, env(safe-area-inset-bottom));z-index:100;box-shadow:0 -4px 16px rgba(0,0,0,.06);}
+    .tabbar-mobile .tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;padding:6px 2px;font-size:10px;color:#9aa0ae;transition:color .2s ease;}
+    .tabbar-mobile .tab-btn .ic{font-size:19px;transition:transform .2s ease;}
+    .tabbar-mobile .tab-btn.active{color:var(--blue);}
+    .tabbar-mobile .tab-btn.active .ic{transform:translateY(-2px) scale(1.1);}
+    
+    /* Grids & Lists */
+    .team-grid-wrap{padding:14px;border-radius:20px;}
+    .members-grid, .goal-grid { grid-template-columns: 1fr; gap: 14px; }
+    .round-btn{width:44px;height:44px;font-size:19px;}
+    .mini-header{margin-top:4px; flex-direction: column; align-items: flex-start;}
+    .mini-balance{width:100%;justify-content:space-between; margin-top: 10px;}
+    .fade-panel{padding:16px;margin-top:14px;}
+    .just-grid{flex-direction:column;gap:18px;}
+    .just-point{width:100%;}
+    .just-actions{flex-wrap:wrap;}
+    .just-actions .btn-pill{flex:1;text-align:center;}
+    .edit-table-head{display:none;}
+    .edit-table-row{grid-template-columns:1fr;gap:6px;padding:14px 0;}
+    .edit-table-point{width:90px;}
+    .lteam-row{flex-direction:column;align-items:stretch;gap:12px;padding:16px;border-radius:18px;}
+    .comp-chips{display:flex; flex-direction: column; gap:8px;}
+
+    /* Modals */
+    .modal-overlay{padding:16px;} 
+    .modal-card{padding:34px 20px 24px; border-radius:22px; max-height:85vh; width:100%; max-width:100%;} 
+    .modal-close-btn { top: 16px; right: 16px; }
+    .top-right-status { position: static; display: flex; justify-content: center; width: 100%; margin-bottom: 16px; }
+    .activity-row { flex-direction: column; padding: 14px 16px; }
+    .activity-provider { margin-top: 8px; }
+    .stepper-wrapper { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .step-item { flex-direction: row; align-items: center; width: 100%; }
+    .step-dash { width: 40px; height: 6px; }
+    .btn-acc-action { width: 100%; text-align: center; }
+  }
 </style>
 </head>
 <body class="has-demo-bar">
@@ -315,7 +368,7 @@
 <div class="demo-bar">
   <div class="demo-bar-title">
     <i class="fa-solid fa-wand-magic-sparkles"></i> 
-    <span>StarMeter Interactive Sync Demo Portal</span>
+    <span>StarMeter Interactive Demo Portal</span>
   </div>
   <div class="demo-btn-group">
     <button class="demo-role-btn" id="btn-switch-staff" onclick="triggerGoogleAuthModal()">
@@ -415,9 +468,7 @@
   <section id="scr-app" class="screen">
     <header class="app-header">
       <div class="logo-slot" data-size="small"></div>
-      <nav class="tabbar-desktop" id="tabbar-desktop">
-        <span class="tab-indicator" id="tab-indicator"></span>
-      </nav>
+      <nav class="tabbar-desktop" id="tabbar-desktop"></nav>
       <div class="header-right">
         <div>
           <div class="header-name" id="header-name">Demo User</div>
@@ -543,6 +594,10 @@
       </div>
 
     </main>
+
+    <!-- MOBILE NAVIGATION BOTTOM BAR -->
+    <nav class="tabbar-mobile" id="tabbar-mobile"></nav>
+
   </section>
 </div>
 
@@ -642,7 +697,6 @@ let TEAM = [
     { empId: "MKT-010", name: "ชลลดา มาดี", position: "Marketing Intern", balance: 100, seed: "MKT-010", photoURL: mockPhotos[9], selections: {'comp_ai': true}, idpDetails: {}, recentLogs: [] }
 ];
 
-// Manager Data
 let MOCK_MANAGER = {
     name: "Demo Manager",
     position: "Marketing Manager",
@@ -744,17 +798,26 @@ window.switchDemoRole = (role) => {
     document.getElementById('me-name-text').textContent = ME.name;
     document.getElementById('me-role-text').textContent = ME.position;
 
-    // Build Role Tabs
-    let tabHtml = '<span class="tab-indicator" id="tab-indicator"></span>' + 
-        `<button class="tab-btn" data-tab="my-performance" onclick="showContent('my-performance')"><span>My Performance</span><span class="th-sub">ผลงานของฉัน</span></button>` +
-        `<button class="tab-btn" data-tab="my-learning" onclick="showContent('my-learning')"><span>My Learning</span><span class="th-sub">การเรียนรู้ของฉัน</span></button>`;
+    // Build Role Tabs for Mobile & Desktop
+    let tabHtmlDesktop = '<span class="tab-indicator" id="tab-indicator"></span>';
+    let tabHtmlMobile = '';
     
+    const tabs = [
+        { id: 'my-performance', en: 'My Performance', th: 'ผลงานของฉัน', ic: '★' },
+        { id: 'my-learning', en: 'My Learning', th: 'การเรียนรู้ของฉัน', ic: '🎓' }
+    ];
     if (role === 'manager') {
-        tabHtml += `<button class="tab-btn" data-tab="team-performance" onclick="showContent('team-performance')"><span>Team's Performance</span><span class="th-sub">ผลงานทีม</span></button>` +
-                   `<button class="tab-btn" data-tab="team-learning" onclick="showContent('team-learning')"><span>Team's Learning</span><span class="th-sub">การเรียนรู้ทีม</span></button>`;
+        tabs.push({ id: 'team-performance', en: "Team's Performance", th: 'ผลงานทีม', ic: '👥' });
+        tabs.push({ id: 'team-learning', en: "Team's Learning", th: 'การเรียนรู้ทีม', ic: '📘' });
     }
 
-    document.getElementById('tabbar-desktop').innerHTML = tabHtml;
+    tabs.forEach(t => {
+        tabHtmlDesktop += `<button class="tab-btn" data-tab="${t.id}" onclick="showContent('${t.id}')"><span>${t.en}</span><span class="th-sub">${t.th}</span></button>`;
+        tabHtmlMobile += `<button class="tab-btn" data-tab="${t.id}" onclick="showContent('${t.id}')"><span class="ic">${t.ic}</span><span>${t.en}</span></button>`;
+    });
+
+    document.getElementById('tabbar-desktop').innerHTML = tabHtmlDesktop;
+    document.getElementById('tabbar-mobile').innerHTML = tabHtmlMobile;
 
     // Show App Screen
     document.getElementById('scr-app').classList.add('active');
@@ -772,8 +835,8 @@ window.handleLogout = () => {
 window.escapeAttr = (s) => String(s).replace(/"/g,'&quot;');
 window.escapeHtml = (s) => String(s).replace(/&/g,'&amp;').replace(/</g,'&gt;');
 window.showToast = (msg) => {
-    // Disabled to prevent blocking the presentation view
-    // console.log("Toast hidden:", msg);
+    // Disabled toast messages during demo to prevent blocking UI
+    // console.log("Toast:", msg);
 };
 
 window.showContent = (id) => {
@@ -781,12 +844,17 @@ window.showContent = (id) => {
     document.getElementById('panel-'+id).classList.add('active');
     
     document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-    const btn = document.querySelector(`.tabbar-desktop .tab-btn[data-tab="${id}"]`);
-    if(btn) {
-        btn.classList.add('active');
+    const btnDesktop = document.querySelector(`.tabbar-desktop .tab-btn[data-tab="${id}"]`);
+    const btnMobile = document.querySelector(`.tabbar-mobile .tab-btn[data-tab="${id}"]`);
+    
+    if(btnDesktop) {
+        btnDesktop.classList.add('active');
         const indicator = document.getElementById('tab-indicator');
-        indicator.style.left = btn.offsetLeft + 'px';
-        indicator.style.width = btn.offsetWidth + 'px';
+        indicator.style.left = btnDesktop.offsetLeft + 'px';
+        indicator.style.width = btnDesktop.offsetWidth + 'px';
+    }
+    if(btnMobile) {
+        btnMobile.classList.add('active');
     }
 
     if(id === 'my-performance') renderMyPerformance();
@@ -813,7 +881,7 @@ window.renderMyPerformance = () => {
 window.renderMyLearning = () => {
     const renderCard = (c) => {
         const active = c.type === 'mandatory' || ME.selections[c.key];
-        const isComp = Object.values(ME.idpDetails[c.key]?.certs || {}).some(cert => cert.url && cert.reflection);
+        const isComp = Object.values(ME.idpDetails[c.key]?.certs || {}).some(cert => (cert.url || cert.name) && cert.reflection);
         const colorClass = c.type === 'mandatory' ? 'blue' : 'green';
         return `<button class="goal-card ${colorClass} ${active?'selected':''}" onclick="openCompetency('${c.key}', true, 'me')">
           <div class="tag" style="padding-right:70px;">${c.tag}</div>
@@ -850,7 +918,7 @@ window.renderLearnRows = () => {
             const isMan = c.type === 'mandatory';
             const active = isMan || m.selections[c.key];
             const cls = isMan ? 'plus' : (active ? 'on' : 'off');
-            const isComp = Object.values(m.idpDetails[c.key]?.certs || {}).some(cert => cert.url && cert.reflection);
+            const isComp = Object.values(m.idpDetails[c.key]?.certs || {}).some(cert => (cert.url || cert.name) && cert.reflection);
             const compText = isComp ? ' <span style="color:var(--green-dark);">✓</span>' : '';
             return `<button class="comp-chip ${cls}" onclick="openCompetency('${c.key}', false, '${m.seed}')"><span class="en">${c.tag}${compText}</span>${c.th.slice(0,26)}…<span class="arrow">↘</span></button>`;
         }).join('');
