@@ -31,7 +31,20 @@
   .screen.center.active{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;}
 
   /* ===== Fix SweetAlert Z-Index ===== */
-  .swal2-container { z-index: 999999 !important; }
+  .swal2-container { z-index: 9999999 !important; }
+
+  /* ===== Proxy Banner ===== */
+  .proxy-banner {
+    position: fixed; top: 0; left: 0; width: 100%; height: 40px; background: var(--red-dark); color: #fff;
+    display: none; align-items: center; justify-content: center; gap: 15px; font-size: 13px; font-weight: 700; z-index: 999998;
+    box-shadow: 0 4px 10px rgba(224,40,30,0.25);
+  }
+  .proxy-banner.active { display: flex; }
+  .proxy-btn-exit { background: #fff; color: var(--red-dark); border: none; padding: 4px 14px; border-radius: 12px; font-weight: 800; font-size: 12px; cursor: pointer; transition: transform 0.1s; }
+  .proxy-btn-exit:hover { transform: scale(1.05); }
+
+  body.has-proxy .app-header { top: 40px; }
+  body.has-proxy #app { padding-top: 40px; }
 
   /* ===== Loading Spinner ===== */
   .loader-container { text-align: center; }
@@ -41,25 +54,22 @@
   .loading-subtext { font-size: 12px; color: #9aa0ae; margin-top:6px; }
 
   /* ===== Logo ===== */
-  .logo-slot{display:inline-flex;align-items:center;gap:9px;}
+  .logo-slot{display:inline-flex;align-items:center;gap:9px; cursor: pointer; transition: opacity 0.2s;}
+  .logo-slot:active{opacity: 0.6;}
+  .logo-slot .wordmark{font-weight:800;color:var(--navy);letter-spacing:-.3px;}
+  .logo-slot[data-size="small"] .wordmark{font-size:19px;}
+  .logo-slot[data-size="big"]{flex-direction:column;gap:6px;}
+  .logo-slot[data-size="big"] .wordmark{font-size:36px;letter-spacing:-.5px;}
   .logo-img{display:block;object-fit:contain; max-height: 100%;}
   .logo-slot[data-size="small"] .logo-img{height:36px;width:auto;}
   .logo-slot[data-size="big"] .logo-img{height:80px;width:auto;}
   .subtitle{font-size:18px;color:#333;margin-top:2px;font-weight:500;}
 
   /* ===== Google Login Button ===== */
-  .google-btn {
-    display: flex; align-items: center; justify-content: center; gap: 10px; width: min(340px, 100%);
-    background: #fff; border: 1px solid #dadce0; border-radius: 24px; padding: 12px 20px;
-    font-weight: 600; font-size: 15px; color: #3c4043; margin-top: 24px;
-    cursor: pointer; transition: box-shadow 0.15s ease, transform 0.15s ease;
-  }
+  .google-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: min(340px, 100%); background: #fff; border: 1px solid #dadce0; border-radius: 24px; padding: 12px 20px; font-weight: 600; font-size: 15px; color: #3c4043; margin-top: 24px; cursor: pointer; transition: box-shadow 0.15s ease, transform 0.15s ease; }
   .google-btn:hover { box-shadow: 0 4px 14px rgba(60,64,67,0.18); transform: translateY(-1px); }
 
-  /* Login Info Elements */
-  .login-warning {
-    background: #fff8e1; border: 1px solid #ffe082; color: #d48806; border-radius: 12px; padding: 16px 20px; font-size: 12.5px; margin-top: 24px; width: min(340px, 100%); text-align: left; line-height: 1.6;
-  }
+  .login-warning { background: #fff8e1; border: 1px solid #ffe082; color: #d48806; border-radius: 12px; padding: 16px 20px; font-size: 12.5px; margin-top: 24px; width: min(340px, 100%); text-align: left; line-height: 1.6; }
   .login-warning ul { margin: 8px 0 0; padding-left: 22px; color: #5a5f6c; }
   .login-warning li { margin-bottom: 6px; }
 
@@ -89,7 +99,7 @@
   .badge-manager { background: #eaf6fc; color: #0077d6; }
 
   /* ===== App Shell ===== */
-  .app-header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 40px;border-bottom:1px solid var(--gray-line);position:sticky;top:0;background:#fff;z-index:40;}
+  .app-header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:16px 40px;border-bottom:1px solid var(--gray-line);position:sticky;top:0;background:#fff;z-index:40; transition: top 0.2s;}
   .tabbar-desktop{position:relative;display:flex;gap:4px;}
   .tabbar-desktop .tab-btn{background:none;border:none;padding:10px 18px;font-weight:600;font-size:13.5px;color:#6a6f7c;border-radius:10px;position:relative;z-index:1;transition:color .2s ease,background .2s ease;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.3;}
   .tabbar-desktop .tab-btn:hover{background:#f4f5f7;}
@@ -107,10 +117,12 @@
   main#tab-content{padding:32px 56px 90px;position:relative;}
   .tab-panel{display:none;}
   .tab-panel.active{display:block;opacity:1;transform:translateY(0);transition:opacity .22s ease, transform .22s ease;}
+  .tab-panel.active.entering{opacity:0;transform:translateY(8px);}
   .subscreen{padding:32px 56px 110px;position:relative;}
 
-  .toast{position:fixed;top:60px;left:50%;transform:translateX(-50%) translateY(-14px);background:var(--navy-dark);color:#fff;font-size:13.5px;font-weight:600;padding:13px 22px;border-radius:12px;box-shadow:0 10px 26px rgba(0,0,0,.25);z-index:99999;opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;max-width:90vw;text-align:center;}
+  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-14px);background:var(--navy-dark);color:#fff;font-size:13.5px;font-weight:600;padding:13px 22px;border-radius:12px;box-shadow:0 10px 26px rgba(0,0,0,.25);z-index:9999;opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;max-width:90vw;text-align:center;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast.error{background:var(--red-dark);}
   .toast.success{background:var(--green-dark);}
 
   .fab{position:fixed;bottom:30px;right:calc(50% - 624px);background:var(--blue);color:#fff;border:none;padding:11px 26px;border-radius:24px;font-weight:700;font-size:14px;box-shadow:0 6px 16px rgba(0,145,255,.35);transition:transform .15s ease;}
@@ -121,7 +133,7 @@
   .page-title-en{font-size:15px;color:#9aa0ae;text-align:right;}
   .page-title-th{font-size:13px;color:#b7bbc6;text-align:right;}
 
-  /* Grids & Cards */
+  /* grids */
   .team-grid-wrap{background:#f4f6f9;border-radius:26px;padding:22px;margin-top:26px;}
   .members-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
   .member-card{background:linear-gradient(180deg,#eaf6fc 0%,#ffffff 100%);border:1px solid var(--blue-tint-2);border-radius:18px;padding:18px;}
@@ -150,11 +162,19 @@
   .entry-tooltip .tip-points{margin-top:6px;font-weight:800;font-size:13px;}
   .entry-tooltip .tip-points.g{color:#6fe39a;}
   .entry-tooltip .tip-points.r{color:#ff8f88;}
+  
+  .pager{display:flex;justify-content:center;gap:0;margin-top:34px; flex-wrap: wrap;}
+  .pager button{border:1px solid var(--gray-line);background:#fff;padding:9px 26px;font-weight:600;font-size:13px;color:#666; margin-left:-1px;}
+  .pager button:first-child{border-radius:20px 0 0 20px;}
+  .pager button:last-child{border-radius:0 20px 20px 0;}
+  .pager button.active{background:#fff;border-color:var(--blue);color:var(--blue);position:relative;z-index:1;}
 
+  /* slim header */
   .mini-header{display:flex;justify-content:space-between;align-items:center;margin-top:20px;flex-wrap:wrap;gap:14px;}
   .mini-identity{display:flex;align-items:center;gap:14px;}
   .mini-avatar-wrap{position:relative;flex-shrink:0;}
   .mini-avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;display:block; background:#fff; border:1px solid var(--gray-line);}
+  .mini-photo-edit-btn{position:absolute;bottom:-4px;right:-4px;width:20px;height:20px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;box-shadow:0 3px 8px rgba(0,0,0,.25);border:2px solid #fff; cursor:pointer;}
   .mini-name{font-weight:700;font-size:16px;color:#1c2130;line-height:1.3;}
   .mini-role{font-size:13px;color:#8b90a0;line-height:1.3;}
   .mini-balance{display:flex;align-items:center;gap:16px;}
@@ -162,7 +182,7 @@
   .mini-balance-label .sub{display:block;font-size:11px;color:#9aa0ae;}
   .balance-pill-lg{background:#fff;border:1px solid #d8dbe2;border-radius:30px;padding:11px 30px;font-size:26px;font-weight:800;color:#1c2130;min-width:90px;text-align:center;}
 
-  /* Fade Panel */
+  /* fade panel */
   .fade-panel{background:linear-gradient(180deg,#f8f9fb 0%,#eef1f5 100%);border-radius:22px;padding:22px;margin-top:18px;position:relative;}
   .fade-panel.scroll{max-height:600px;overflow-y:auto;}
   .fade-panel .entry-card{background:#fff;border:1px solid var(--gray-line);border-radius:16px;padding:18px 22px;margin-bottom:14px;}
@@ -179,18 +199,26 @@
   .fade-entry-top .col{flex:1;}
 
   .field-label{font-size:14px;font-weight:700;color:#1c2130;margin-top:4px;}
+  .field-hint{font-size:11.5px;color:#9aa0ae;margin-bottom:8px;}
   .lorem-box{width:100%;border:1px solid var(--gray-line);border-radius:10px;background:#fff;padding:12px 14px;font-size:13px;color:#4a4f5c;resize:none;line-height:1.6;}
+  .char-hint{text-align:right;font-size:10.5px;color:#9aa0ae;margin-top:4px;}
   .just-grid{display:flex;gap:30px;}
   .just-fields{flex:1;min-width:0;}
   .just-point{width:230px;flex-shrink:0;}
   .point-pill-input{width:100%;height:64px;border-radius:32px;text-align:center;font-size:30px;font-weight:800;border:none;outline:none;}
   .point-pill-input.pos{background:var(--green-tint-2);color:var(--green-dark);box-shadow:0 0 0 6px rgba(31,174,77,.12);}
   .point-pill-input.neg{background:#fcd6d3;color:var(--red-dark);box-shadow:0 0 0 6px rgba(224,40,30,.12);}
+  .point-hint{font-size:11px;line-height:1.7;margin-top:6px;}
+  .point-hint .g{color:var(--green-dark);display:block;}
+  .point-hint .r{color:var(--red-dark);display:block;}
   .just-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px;}
   .btn-pill{border:none;border-radius:20px;padding:11px 26px;font-weight:700;font-size:13.5px;color:#fff;}
   .btn-pill.red{background:var(--red);}
   .btn-pill.green{background:var(--green);}
   .btn-pill.blue{background:var(--blue);}
+
+  .btn-primary-blue{background:var(--blue);color:#fff;border:none;border-radius:20px;padding:11px 24px;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:6px;}
+  .btn-primary-blue:hover{background:var(--blue-dark);}
 
   .edit-table-head{display:grid;grid-template-columns:1fr 2fr 110px;gap:20px;font-weight:700;font-size:14px;color:#1c2130;padding-bottom:10px;border-bottom:1px solid var(--gray-line);}
   .edit-table-row{display:grid;grid-template-columns:1fr 2fr 110px;gap:20px;padding:18px 0;border-bottom:1px solid var(--gray-line);align-items:start;}
@@ -205,7 +233,7 @@
   .btn-chip.gray{background:#dfe2e8;color:#555;}
   .btn-chip.blue{background:var(--blue);color:#fff;}
 
-  /* Learning Team Grid */
+  /* learning team grid */
   .lteam-block{margin-bottom:20px;}
   .lteam-row{background:var(--blue-tint);border:1px solid var(--blue-tint-2);border-radius:18px;padding:16px 20px;display:flex;align-items:center;gap:20px;}
   .lteam-head{display:flex;align-items:center;gap:14px;flex-shrink:0;}
@@ -220,8 +248,8 @@
   .comp-chip.off{background:var(--green-tint-2);color:#1a6b34;}
   .comp-chip.plus{background:var(--blue-tint-2);color:var(--blue-dark);}
   .comp-chip .arrow{float:right;opacity:.7;}
-
-  /* Goal Page (My Learning) */
+  
+  /* goal page */
   .goal-sub{font-size:13px;color:#5a5f6c;margin:4px 0 16px;}
   .goal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
   .goal-card{border:none;text-align:left;border-radius:16px;padding:20px;cursor:pointer;position:relative;min-height:150px;transition:background .15s ease,color .15s ease;}
@@ -237,94 +265,128 @@
   .goal-card .en-name{font-weight:700;font-size:13.5px;color:#1c2130;}
   .goal-card .desc{font-size:10.5px;color:#6b7280;margin-top:8px;line-height:1.5;}
   .goal-card .arrow{position:absolute;bottom:14px;right:16px;color:var(--blue);font-size:15px;}
+  
+  /* 🌟 Complete Badge on Card */
   .badge-complete { position:absolute; top:16px; right:16px; background:var(--green-dark); color:#fff; font-size:11px; font-weight:700; padding:4px 10px; border-radius:12px; box-shadow:0 2px 6px rgba(21,148,64,.2); z-index:2; }
 
-  /* ===== MODAL & CARDS ===== */
-  .modal-overlay{position:fixed;inset:0;background:rgba(20,25,40,.45);display:none;align-items:center;justify-content:center;z-index:100000;padding:20px;} 
+  /* ===== MODAL & CARDS NEW DESIGN ===== */
+  .modal-overlay{position:fixed;inset:0;background:rgba(20,25,40,.45);display:none;align-items:center;justify-content:center;z-index:500;padding:20px;} 
   .modal-overlay.active{display:flex;}
-  .modal-card { border-radius:26px; padding:34px 38px; max-width:680px; width:100%; max-height:88vh; overflow-y:auto; overflow-x:hidden; position:relative; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
-  .modal-close-btn { position:absolute; top:24px; right:24px; background:#e3e6ec; border:none; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; color:#5a5f6c; cursor:pointer; transition:background 0.2s; z-index:10; }
-  .modal-close-btn:hover { background:#d1d5db; color:#1c2130; }
-
-  .modal-card.mandatory { background: #f0f8ff; border: none; }
-  .modal-card.selective { background: #ffffff; border: 2px solid var(--green-select); }
-  .modal-card.selective.selected { background: #f2fcf5; border: none; }
-
-  /* Header Top Layout */
-  .modal-header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-right: 36px; gap: 10px; }
-  .modal-card .tag{font-size:16px; font-weight:800; color:#1c2130; margin-bottom:0;} 
   
-  .top-right-status { border-radius: 20px; padding: 8px 18px; font-weight: 700; font-size: 13.5px; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; border: none; cursor: pointer; }
-  .top-right-status.mandatory { background: var(--blue); color: #fff; cursor: default; }
-  .modal-card.selective .top-right-status.selective-selected,
-  .modal-card.selective .top-right-status.completed { background: var(--green-select); color: #fff; }
-  .modal-card.selective .top-right-status.selective-unselected { background: #fff; border: 1px solid var(--green-select); color: var(--green-select); }
+  .modal-card { border-radius:26px; padding:34px 38px; max-width:640px; width:100%; max-height:88vh; overflow-y:auto; overflow-x:hidden; position:relative; }
+  .modal-close-btn { position:absolute; top:16px; right:16px; background:rgba(0,0,0,0.06); border:none; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; color:#5a5f6c; cursor:pointer; transition:background 0.2s; z-index:10; }
+  .modal-close-btn:hover { background:rgba(0,0,0,0.12); color:#1c2130; }
 
-  .modal-card h2{font-size:20px;margin:0 0 6px;color:#1c2130; line-height: 1.4;}
+  /* Theme: Mandatory (Plus One) */
+  .modal-card.mandatory { background: #eaf6fc; border: 1px solid #bfe0f5; }
+  
+  /* Theme: Selective */
+  .modal-card.selective { background: #ffffff; border: 2px solid #3fbe5c; }
+  .modal-card.selective.selected { background: #e6faec; }
+
+  .modal-card .tag{font-size:15px; font-weight:700; color:#1c2130; margin-bottom:12px;} 
+  .modal-card h2{font-size:18px;margin:0 0 6px;color:#1c2130; padding-right:80px; line-height: 1.4;}
   .modal-card h3{font-size:16px;margin:0 0 14px;color:#1c2130; font-weight: 700;}
-  .modal-card .desc{font-size:12.5px;color:#5a5f6c;line-height:1.6; margin-bottom: 24px;}
+  .modal-card .desc{font-size:11.5px;color:#5a5f6c;line-height:1.6; margin-bottom: 24px;}
   
-  .section-label{font-size:13px; color:#1c2130; display:flex; justify-content:space-between; align-items:flex-end; border-bottom: 1px dashed #d1d5db; padding-bottom: 12px; margin-bottom: 16px;}
-  .section-label span.right { font-size:11px; color:#7a8090; font-weight: normal; }
+  .section-label{font-size:13px; color:#1c2130; display:flex; justify-content:space-between; align-items:flex-end; border-bottom: 1px solid rgba(0,0,0,0.08); padding-bottom: 8px; margin-bottom: 12px;}
+  .section-label span.right { font-size:10px; color:#7a8090; font-weight: normal; }
   
-  .activity-box { border: 1px solid #d1d5db; border-radius: 12px; margin-bottom: 16px; background: #fff; overflow: hidden; transition: box-shadow 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.02);}
-  .activity-box:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
-  .activity-row{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;cursor:pointer; padding: 18px 20px; transition: background 0.2s;}
-  .activity-row:hover { background:rgba(0,0,0,0.01); }
-  .activity-provider{font-size:13px;color:#4a4f5c;white-space:nowrap;display:flex;align-items:center;gap:6px; margin-top:2px;}
+  /* 🌟 Top Right Selection Button (Tick box logic) */
+  .top-right-status { position:absolute; top: 30px; right: 60px; border-radius: 20px; padding: 6px 14px; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
+  button.top-right-status { border: none; cursor: pointer; }
+  .top-right-status.mandatory { background: #0088FF; color: #fff; cursor: default; }
+  .top-right-status.selective-selected { background: #e6faec; color: #159440; }
+  .top-right-status.selective-unselected { background: #e6faec; color: #159440; }
+  .top-right-status.completed { background: var(--green-dark); color: #fff; }
+
+  /* 🌟 Activity Box Frame */
+  .activity-box { border: 1px solid var(--gray-line); border-radius: 12px; margin-bottom: 16px; background: #fff; overflow: hidden; transition: border-color 0.2s;}
+  .modal-card.mandatory .activity-box { border-color: #bfe0f5; }
+  .modal-card.selective .activity-box { border-color: #c8f0d2; }
   
-  .activity-detail{padding:0 20px 24px 20px;}
-  .cert-upload{background:none;color:#5a5f6c;border:none;padding:0;font-size:12.5px;font-weight:400;display:inline-flex;align-items:center;gap:8px;cursor:pointer; margin-top:6px;}
-  .file-status{font-size:12.5px;font-weight:700;color:var(--blue); display:inline-flex; align-items:center; gap:6px; margin-top:10px; margin-bottom:4px;}
+  .activity-row{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;cursor:pointer; padding: 14px 16px; transition: background 0.2s;}
+  .activity-row:hover { background:rgba(0,0,0,0.02); }
+  .activity-row .title{color:#1c2130;font-size:13px;line-height:1.4; font-weight: 600;}
+  .activity-provider{font-size:12px;color:#4a4f5c;white-space:nowrap;display:flex;align-items:center;gap:6px; margin-top:4px;}
   
-  .reflection-box { width:100%; border:1px solid var(--gray-input); border-radius:12px; background:#fafafa; padding:16px; font-size:13px; color:#4a4f5c; resize:none; line-height:1.6; margin-top: 14px; }
-  .reflection-box:focus { outline: 1px solid var(--blue); background:#fff; }
+  /* Accordion Detail */
+  .activity-detail{padding:0 16px 20px 34px;}
+  .cert-upload{background:none;color:#5a5f6c;border:none;padding:0;font-size:11.5px;font-weight:400;display:inline-flex;align-items:center;gap:8px;cursor:pointer; margin-top:6px;}
+  .cert-upload i { font-size:14px; }
+  .file-status{font-size:11.5px;font-weight:700;color:var(--blue); display:inline-flex; align-items:center; gap:6px; margin-top:10px; margin-bottom:4px;}
+  
+  /* Reflection Textarea */
+  .reflection-box { width:100%; border:1px solid var(--gray-line); border-radius:12px; background:#fafafa; padding:14px; font-size:12.5px; color:#4a4f5c; resize:none; line-height:1.6; margin-top: 14px; }
+  .reflection-box:focus { outline: 1px solid var(--green-select); background:#fff; }
   .reflection-box:disabled { background: #f2f3f6; cursor: not-allowed; opacity:0.8;}
   
-  .btn-acc-action { border:none; border-radius:16px; padding:10px 26px; font-weight:700; font-size:13px; color:#fff; margin-top: 12px; float: right; cursor: pointer;}
+  .btn-acc-action { border:none; border-radius:16px; padding:8px 24px; font-weight:700; font-size:13px; color:#fff; margin-top: 12px; float: right;}
   .btn-acc-action.green { background: var(--green-select); }
   .btn-acc-action.blue { background: var(--blue); }
   .btn-acc-action.yellow { background: #ffc107; color: #1c2130; }
   .clear-float { clear: both; }
 
-  .stepper-wrapper { display: flex; gap: 12px; margin-top: 34px; padding-top: 24px; border-top: 1px dashed #d1d5db; }
-  .step-item { flex: 1; display: flex; flex-direction: column; gap: 8px; text-align: center; align-items: center; }
-  .step-dash { height: 6px; border-radius: 4px; background: #e3e6ec; transition: background 0.3s; width: 100%; }
-  .step-label { font-size: 11.5px; color: #8b90a0; font-weight: 700; transition: color 0.3s; }
+  /* 🌟 Overall Stepper Progress (Bottom of modal) */
+  .overall-stepper-container { display: flex; justify-content: flex-start; margin-top: 30px; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1); }
+  .stepper-bar { display: flex; gap: 8px; width: 100%; }
+  .step-pill { flex: 1; text-align: center; padding: 8px 0; border-radius: 20px; font-size: 11px; font-weight: 700; color: #8b90a0; background: #d7dade; transition: 0.3s; }
 
-  .step-item.blue-active .step-dash { background: var(--blue); }
-  .step-item.blue-active .step-label { color: var(--blue); }
-  .step-item.green-active .step-dash { background: var(--green-select); }
-  .step-item.green-active .step-label { color: var(--green-select); }
+  /* Mandatory Colors */
+  .stepper-bar.mandatory .step-pill.active-1 { background: #0088FF; color: #fff; }
+  .stepper-bar.mandatory .step-pill.active-2 { background: #0088FF; color: #fff; }
+  .stepper-bar.mandatory .step-pill.active-3 { background: #0366d4; color: #fff; }
 
-  /* =========================================================
-     MOBILE RESPONSIVE 
-     ========================================================= */
-  @media (max-width: 640px) {
-    /* Login Portal */
-    .portal-grid { grid-template-columns: 1fr; margin-top: 16px; }
-    .google-auth-card { padding: 24px 20px 20px; border-radius: 18px; }
+  /* Selective Colors */
+  .stepper-bar.selective .step-pill.active-1 { background: #e6faec; color: #159440; } 
+  .stepper-bar.selective .step-pill.active-2 { background: #2bb94a; color: #fff; }
+  .stepper-bar.selective .step-pill.active-3 { background: #06821a; color: #fff; }
 
-    /* App Shell */
-    .app-header{padding:14px 16px; top: 0;}
+  /* 🌟 CSS สำหรับ Toggle Switch ในตั้งค่าระบบ */
+  .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #d7dade; transition: .3s; border-radius: 24px; }
+  .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+  input:checked + .slider { background-color: var(--green-select); }
+  input:checked + .slider:before { transform: translateX(20px); }
+  .config-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px dashed var(--gray-line); }
+  .config-row:last-child { border-bottom: none; }
+
+  .info-layout{display:flex;gap:56px;align-items:flex-start;margin-top:14px;}
+  .info-image-col{flex:0 0 auto;width:min(440px, 42%);}
+  .info-image-box{width:100%;aspect-ratio:1/1;border-radius:var(--radius-lg);background:#e3e6ec;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;}
+  .info-image-box img{width:100%;height:100%;object-fit:cover;display:block;}
+  .info-image-box .info-image-placeholder{font-size:12.5px;color:#9aa0ae;text-align:center;padding:0 20px;line-height:1.6;}
+  .info-text-col{flex:1 1 420px;min-width:0;}
+  .contact-copy{max-width:760px;font-size:13px;line-height:1.75;color:#1c2130;margin-top:8px;}
+  .contact-copy p{margin:0 0 16px;}
+  .info-contact-block{margin-top:40px;}
+  .contact-title{font-size:26px;font-weight:800;letter-spacing:9px;color:#1c2130;}
+  .contact-email{display:block;margin-top:10px;font-size:14px;color:var(--blue);text-decoration:underline;}
+
+  /* ============ MOBILE ============ */
+  @media (max-width:640px){
+    .app-header{padding:14px 16px;}
     .tabbar-desktop{display:none;}
-    .header-name, .header-role{display:none;}
+    .header-name,.header-role{display:none;}
     main#tab-content{padding:20px 16px 96px;}
     .subscreen{padding:20px 16px 110px;}
-    
-    /* Bottom Navigation Tab Bar for Mobile */
-    .tabbar-mobile{display:flex;position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--gray-line);padding:6px 4px max(6px, env(safe-area-inset-bottom));z-index:10;box-shadow:0 -4px 16px rgba(0,0,0,.06);}
+    .tabbar-mobile{display:flex;position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--gray-line);padding:6px 4px max(6px, env(safe-area-inset-bottom));z-index:100;box-shadow:0 -4px 16px rgba(0,0,0,.06);}
     .tabbar-mobile .tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;padding:6px 2px;font-size:10px;color:#9aa0ae;transition:color .2s ease;}
     .tabbar-mobile .tab-btn .ic{font-size:19px;transition:transform .2s ease;}
     .tabbar-mobile .tab-btn.active{color:var(--blue);}
     .tabbar-mobile .tab-btn.active .ic{transform:translateY(-2px) scale(1.1);}
-    
-    /* Grids & Lists */
+    .fab{left:14px;right:14px;bottom:14px;width:auto;border-radius:14px;padding:14px 0;font-size:15px; padding-bottom:max(14px, env(safe-area-inset-bottom));}
+    .field-input{height:48px;font-size:16px;} 
+    .btn-navy{width:100%;padding:15px 0;font-size:16px;}
+    .google-btn{padding:14px 20px;font-size:15px;}
     .team-grid-wrap{padding:14px;border-radius:20px;}
-    .members-grid, .goal-grid { grid-template-columns: 1fr; gap: 14px; }
+    .members-grid{grid-template-columns:1fr;gap:16px;}
+    .goal-grid{grid-template-columns:1fr;gap:14px;}
     .round-btn{width:44px;height:44px;font-size:19px;}
-    .mini-header{margin-top:4px; flex-direction: column; align-items: flex-start;}
-    .mini-balance{width:100%;justify-content:space-between; margin-top: 10px;}
+    .pager button{padding:11px 22px;font-size:13.5px;}
+    .mini-header{margin-top:4px;}
+    .mini-balance{width:100%;justify-content:space-between;}
     .fade-panel{padding:16px;margin-top:14px;}
     .just-grid{flex-direction:column;gap:18px;}
     .just-point{width:100%;}
@@ -334,34 +396,71 @@
     .edit-table-row{grid-template-columns:1fr;gap:6px;padding:14px 0;}
     .edit-table-point{width:90px;}
     .lteam-row{flex-direction:column;align-items:stretch;gap:12px;padding:16px;border-radius:18px;}
-    .comp-chips{display:flex; flex-direction: column; gap:8px;}
+    .comp-chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    .modal-overlay{padding:16px;align-items:center;} 
+    .modal-card{padding:34px 20px 24px;border-radius:22px;max-height:85vh;width:100%;max-width:100%;} 
+    .progress-row{flex-direction:column-reverse;align-items:stretch;gap:12px;}
+    .progress-row > div:first-child{width:100%;}
+    .pill-status{width:100%;text-align:center;}
+    .btn-back-dark{width:100%;text-align:center;padding:13px 0;}
+    .btn-acc-action { width: 100%; padding: 12px 0;}
+    .info-layout{flex-direction:column;gap:22px;margin-top:6px;}
+    .info-image-col{width:min(320px, 72vw);margin:0 auto;}
+    .info-text-col{width:100%;}
+    .top-right-status { right: 16px; top: -14px; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
+  }
 
-    /* Modals */
-    .modal-overlay{padding:16px; z-index:100000;} 
-    .modal-card{padding:34px 20px 24px; border-radius:22px; max-height:85vh; width:100%; max-width:100%;} 
-    .modal-close-btn { top: 16px; right: 16px; }
-    
-    /* Fix: Header wrap on mobile */
-    .modal-header-top { flex-direction: column; gap: 12px; padding-right: 30px; }
-    .top-right-status { width: auto; align-self: flex-start; margin-bottom: 0; padding: 6px 12px; font-size: 12px; }
-    
-    /* Fix: Section label wrap on mobile */
-    .section-label { flex-direction: column; align-items: flex-start; gap: 6px; }
-    .section-label span.right { align-self: flex-start; }
-
-    .activity-row { flex-direction: column; padding: 14px 16px; }
-    .activity-provider { margin-top: 8px; }
-    .btn-acc-action { width: 100%; text-align: center; }
-
-    /* Stepper Mobile */
-    .stepper-wrapper { flex-direction: row; margin-top: 24px; padding-top: 16px; gap: 8px; }
-    .step-item { flex-direction: column; align-items: center; width: auto; }
-    .step-dash { height: 6px; width: 100%; }
-    .step-label { font-size: 10px; }
+  @media (max-width:900px) and (min-width:641px){
+    .info-layout{gap:34px;}
+    .info-image-col{width:min(300px, 38%);}
   }
 </style>
 </head>
 <body>
+
+<!-- ADMIN MODAL (Proxy / Config) -->
+<div class="modal-overlay" id="admin-modal" style="z-index: 1000001;">
+  <div class="modal-card" style="background:#fff; max-width:500px; padding:30px;">
+    <button class="modal-close-btn" onclick="closeAdminModal()"><i class="fa-solid fa-xmark"></i></button>
+    
+    <div style="display:flex; align-items:center; gap: 14px; margin-bottom:20px;">
+        <div style="background:var(--blue-tint-2); color:var(--blue-dark); width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px;">
+            <i class="fa-solid fa-user-secret"></i>
+        </div>
+        <div>
+            <h3 style="margin:0; font-size:18px;">Proxy User Mode</h3>
+            <div style="font-size:12.5px; color:#5a5f6c; margin-top:2px;">ระบบ Proxy หน้าจอ (Demo)</div>
+        </div>
+    </div>
+    <div class="field-group" style="width:100%; margin-top:0; margin-bottom:34px;">
+        <div style="font-size:14px; color:#3a3f4c; margin-bottom:8px; font-weight:500;">รหัสพนักงาน (เช่น MKT-002, MKT-005)</div>
+        <div style="display:flex; gap:10px;">
+            <input type="text" id="proxy-empid-input" class="field-input" placeholder="ระบุรหัสพนักงาน..." style="background:#f4f5f7; border:1px solid var(--gray-line); padding:0 15px;">
+            <button class="btn-primary-blue" onclick="startProxy()">👁️ Proxy</button>
+        </div>
+    </div>
+
+    <!-- System Config -->
+    <div style="display:flex; align-items:center; gap: 14px; margin-bottom:20px; padding-top:24px; border-top:1px solid var(--gray-line);">
+        <div style="background:var(--green-tint-2); color:var(--green-dark); width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px;">
+            <i class="fa-solid fa-toggle-on"></i>
+        </div>
+        <div>
+            <h3 style="margin:0; font-size:18px;">System Configuration</h3>
+            <div style="font-size:12.5px; color:#5a5f6c; margin-top:2px;">ตั้งค่าการแสดงผลหน้าจอหลัก (Demo)</div>
+        </div>
+    </div>
+    <div id="admin-config-list" style="background:#f9f9fb; border:1px solid var(--gray-line); border-radius:14px; padding:0 20px;">
+        <!-- JS fills this -->
+    </div>
+  </div>
+</div>
+
+<!-- PROXY BANNER -->
+<div id="proxy-banner" class="proxy-banner">
+  <div>🔴 <b>PROXY MODE:</b> คุณกำลัง Proxy เป็น <span id="proxy-target-name"></span></div>
+  <button class="proxy-btn-exit" onclick="exitProxy()">ออกจากการ Proxy (Exit)</button>
+</div>
 
 <div id="app">
 
@@ -453,7 +552,7 @@
   <!-- POST-LOGIN APP SHELL -->
   <section id="scr-app" class="screen">
     <header class="app-header">
-      <div class="logo-slot" data-size="small"></div>
+      <div class="logo-slot" data-size="small" onclick="handleLogoClick()" title="คลิก 3 ครั้งเพื่อเข้าสู่ Admin Mode"></div>
       <nav class="tabbar-desktop" id="tabbar-desktop"></nav>
       <div class="header-right">
         <div>
@@ -466,6 +565,40 @@
     </header>
 
     <main id="tab-content">
+
+      <!-- INFO TAB -->
+      <div id="panel-info" class="tab-panel">
+        <div class="info-layout">
+          <div class="info-image-col">
+            <div class="info-image-box">
+              <img id="info-image" src="https://firebasestorage.googleapis.com/v0/b/gap-learning-plan.firebasestorage.app/o/How%20to%20use%20StarMeter.png?alt=media&token=64c48d42-f391-4972-aadc-db013b2954fc" alt="Instructional guide">
+            </div>
+          </div>
+          <div class="info-text-col">
+           <div class="contact-copy">
+              <p>Training Management Center: TMC พร้อมดูแลทุกท่านในการจัดทำแผนพัฒนาศักยภาพรายบุคคล (Individual Development Plan: IDP) ประจำปี 2026 หากท่านพบปัญหาหรือมีข้อสงสัยในกรณีดังต่อไปนี้ สามารถติดต่อทีมงานของเราได้ทันที:</p>
+              <p><strong>1. ปัญหาการเข้าสู่ระบบ (Technical Assistance & Access)</strong></p>
+              <ul style="margin-top:-10px; margin-bottom:16px; padding-left:24px;">
+                <li>ไม่สามารถเข้าสู่ระบบ StarMeter ได้</li>
+                <li>ระบบหมดเวลาเชื่อมต่อ (System Timeout) หรือเกิดข้อผิดพลาดขณะบันทึกข้อมูลเป้าหมาย</li>
+                <li>หน้าแดชบอร์ด (Dashboard) แสดงผลไม่ถูกต้อง</li>
+              </ul>
+              <p><strong>2. สอบถามข้อมูลการตั้งเป้าหมายและการประเมินผลงาน (Performance & Goal Setting Inquiries)</strong></p>
+              <ul style="margin-top:-10px; margin-bottom:16px; padding-left:24px;">
+                <li>มีข้อสงสัยเกี่ยวกับขั้นตอนการส่งและการอนุมัติ IDP</li>
+                <li>ต้องการคำแนะนำในการค้นหาหลักสูตรการเรียนรู้เพื่อแนบในแผนพัฒนาตนเอง</li>
+              </ul>
+              <p><strong>3. การแก้ไขข้อมูลส่วนตัวและข้อมูลในระบบ (Data & Profile Corrections)</strong></p>
+              <ul style="margin-top:-10px; margin-bottom:16px; padding-left:24px;">
+                <li>ข้อมูลในโปรไฟล์ส่วนตัวไม่ถูกต้อง เช่น ตำแหน่งงานไม่อัปเดต, แผนกไม่ถูกต้อง หรือผู้บังคับบัญชา (Reporting Manager) ไม่ถูกต้อง</li>
+                <li>ประวัติการฝึกอบรมหรือใบรับรอง (Certifications) ในอดีตสูญหายหรือไม่แสดงในโปรไฟล์</li>
+              </ul>
+              <p><strong>ช่องทางการติดต่อ (How to Reach Us)</strong><br>
+              หากท่านพบปัญหาตามข้างต้น หรือมีข้อสงสัยทั่วไปเกี่ยวกับการเรียนรู้และการประเมินผลงานบนแพลตฟอร์ม สามารถส่งอีเมลถึงศูนย์บริหารการจัดการการฝึกอบรม (TMC) ได้ที่: <a href="mailto:taa_learning@airasia.com" style="color:var(--blue);">taa_learning@airasia.com</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
       
       <!-- MY PERFORMANCE -->
       <div id="panel-my-performance" class="tab-panel">
@@ -655,23 +788,14 @@ const mockPhotos = [
 
 const getPastDate = (daysAgo) => { let d = new Date(); d.setDate(d.getDate() - daysAgo); return d.toISOString(); };
 
-// --- SINGLE UNIFIED DATA STORE FOR TEAM & EMPLOYEE ---
+// --- DEMO STATE ---
+let systemConfig = {
+    mandatoryFirst: true,
+    tabs: { 'info': true, 'my-performance': true, 'my-learning': true, 'team-performance': true, 'team-learning': true }
+};
+
 let TEAM = [
-    {
-        empId: "MKT-001",
-        name: "ณัฐวุฒิ ยอดเยี่ยม",
-        position: "Performance Marketer",
-        role: "staff",
-        photoURL: mockPhotos[0],
-        balance: 130,
-        seed: "MKT-001",
-        selections: {'comp_ai': true}, // Initial: Unconfigured selective goals
-        idpDetails: { 'comp_ai': { certs: {} } },
-        recentLogs: [
-            { topic: "Optimization แคมเปญ", points: 20, desc: "ปรับลด Cost per Click ลงได้ถึง 30%", timestamp: getPastDate(2) },
-            { topic: "เข้างานตรงเวลา", points: 10, desc: "รับผิดชอบเวลาดีมาก", timestamp: getPastDate(15) }
-        ]
-    },
+    { empId: "MKT-001", name: "ณัฐวุฒิ ยอดเยี่ยม", position: "Performance Marketer", role: "staff", photoURL: mockPhotos[0], balance: 130, seed: "MKT-001", selections: {'comp_ai': true}, idpDetails: { 'comp_ai': { certs: {} } }, recentLogs: [{ topic: "Optimization แคมเปญ", points: 20, desc: "ปรับลด Cost per Click ลงได้ถึง 30%", timestamp: getPastDate(2) }, { topic: "เข้างานตรงเวลา", points: 10, desc: "รับผิดชอบเวลาดีมาก", timestamp: getPastDate(15) }] },
     { empId: "MKT-002", name: "พิมดาว สว่างวงศ์", position: "Content Strategist", balance: 115, seed: "MKT-002", photoURL: mockPhotos[1], selections: {'comp_ai': true, 'comp_eq': true, 'comp_strategy': true}, idpDetails: {'comp_eq': {certs:{}}}, recentLogs: [{ topic: "ไอเดีย Content Viral", points: 15, desc: "คลิปมียอดวิว 1 ล้านวิวใน 3 วัน", timestamp: getPastDate(5) }] },
     { empId: "MKT-003", name: "กิตติพงษ์ ตรงเวลา", position: "SEO Specialist", balance: 95, seed: "MKT-003", photoURL: mockPhotos[2], selections: {'comp_ai': true, 'comp_analytics': true}, idpDetails: {}, recentLogs: [{ topic: "ส่ง Report ล่าช้า", points: -5, desc: "ส่งรายงานช้า 2 วัน", timestamp: getPastDate(1) }] },
     { empId: "MKT-004", name: "อารยา งามตา", position: "Graphic Designer", balance: 100, seed: "MKT-004", photoURL: mockPhotos[3], selections: {'comp_ai': true}, idpDetails: {}, recentLogs: [] },
@@ -683,35 +807,25 @@ let TEAM = [
     { empId: "MKT-010", name: "ชลลดา มาดี", position: "Marketing Intern", balance: 100, seed: "MKT-010", photoURL: mockPhotos[9], selections: {'comp_ai': true}, idpDetails: {}, recentLogs: [] }
 ];
 
-// Manager Data
 let MOCK_MANAGER = {
-    name: "Demo Manager",
-    position: "Marketing Manager",
-    role: "manager",
-    photoURL: "https://i.pravatar.cc/150?img=68",
-    balance: 150,
-    seed: "me",
+    empId: "MGR-001", name: "Demo Manager", position: "Marketing Manager", role: "manager", photoURL: "https://i.pravatar.cc/150?img=68", balance: 150, seed: "me",
     selections: {'comp_ai': true, 'comp_eq': true, 'comp_strategy': true, 'comp_analytics': true},
-    idpDetails: {
-        'comp_ai': { certs: {'0': {url:'#', name:'cert_ai.pdf', reflection:'นำ AI มาประยุกต์ใช้วิเคราะห์ข้อมูลการตลาดยอดเยี่ยม'}}},
-        'comp_eq': { certs: {'0': {url:'#', name:'cert_eq.pdf', reflection:'ได้เทคนิคบริหารจัดการอารมณ์ทีมในช่วงงานเร่งด่วน'}}}
-    },
-    recentLogs: [
-        { topic: "ยอดขายทะลุเป้า Q3", points: 30, desc: "ทีมทำงานร่วมกันได้ดีมาก ปิดยอดได้ 120%", timestamp: getPastDate(5) },
-        { topic: "ทำแผน IDP ให้ทีมครบถ้วน", points: 20, desc: "ผลักดันให้ลูกน้องทุกคนมีเป้าหมายที่ชัดเจน", timestamp: getPastDate(12) }
-    ]
+    idpDetails: { 'comp_ai': { certs: {'0': {url:'#', name:'cert_ai.pdf', reflection:'ยอดเยี่ยม'}}} },
+    recentLogs: [{ topic: "ยอดขายทะลุเป้า", points: 30, desc: "ทีมทำงานได้ดีมาก", timestamp: getPastDate(5) }, { topic: "ทำแผน IDP ให้ทีม", points: 20, desc: "ผลักดันให้ทุกคนมีเป้าหมาย", timestamp: getPastDate(12) }]
 };
 
 let CURRENT_ROLE = 'staff_new';
-let ME = TEAM[0]; // TEAM[0] (ณัฐวุฒิ) IS THE MOCKED EMPLOYEE VIEW!
+let ME = TEAM[0]; 
+let isProxyMode = false;
+let PROXY_ME = null;
 let CURRENT_MEMBER_ENTRIES = [];
-let currentTabId = 'my-learning';
+let currentTabId = 'info';
 let currentMemberIdx = 0;
 let editingIdx = null;
 let modalCtx = null;
 let expandedActivity = null;
 
-// --- INITIALIZE UI WITH LOGO FALLBACK ---
+// --- INITIALIZE UI ---
 window.onload = () => {
     renderLogos();
     setTimeout(() => { 
@@ -727,64 +841,122 @@ function renderLogos() {
     });
 }
 
-// Cookie Accordion Toggle
-window.toggleCookieInfo = function() {
-    const content = document.getElementById('cookie-content');
-    const chevron = document.getElementById('cookie-chevron');
-    if (content.classList.contains('show')) {
-        content.classList.remove('show');
-        chevron.classList.replace('fa-chevron-up', 'fa-chevron-down');
+// Admin / Proxy Logic
+let logoClickCount = 0;
+let logoClickTimeout;
+window.handleLogoClick = function() {
+    logoClickCount++;
+    clearTimeout(logoClickTimeout);
+    if (logoClickCount >= 3) {
+        logoClickCount = 0;
+        renderAdminConfig();
+        document.getElementById('admin-modal').classList.add('active');
     } else {
-        content.classList.add('show');
-        chevron.classList.replace('fa-chevron-down', 'fa-chevron-up');
+        logoClickTimeout = setTimeout(() => { logoClickCount = 0; }, 600);
     }
 };
 
-// --- GOOGLE AUTH MODAL CONTROLLER ---
-window.triggerGoogleAuthModal = () => {
-    document.getElementById('google-auth-modal').classList.add('active');
+window.closeAdminModal = function() {
+    document.getElementById('admin-modal').classList.remove('active');
 };
 
-window.selectGoogleAccount = (role) => {
-    document.getElementById('google-auth-modal').classList.remove('active');
-    document.getElementById('scr-login').classList.remove('active');
-    document.getElementById('scr-app').classList.remove('active');
-    document.getElementById('scr-loading').classList.add('active');
+window.renderAdminConfig = function() {
+    const list = document.getElementById('admin-config-list');
+    const isMandatoryFirst = systemConfig.mandatoryFirst !== false; 
+    let html = `
+    <div class="config-row" style="background:#eaf6fc; padding: 14px 16px; border-radius:10px; margin: 10px 0 16px; border:1px solid var(--blue-tint-2);">
+        <div style="font-size:14px; font-weight:700; color:var(--blue-dark);">แสดงวิชาบังคับ (Mandatory) ก่อนวิชาเลือก</div>
+        <label class="switch">
+          <input type="checkbox" ${isMandatoryFirst ? 'checked' : ''} onchange="toggleTabConfig('mandatoryFirst', this.checked)">
+          <span class="slider"></span>
+        </label>
+    </div>
+    <div style="font-size:11px; font-weight:700; color:#8b90a0; margin-bottom:10px;">เปิด/ปิด การแสดงผลเมนูแท็บ</div>
+    `;
 
-    const emailText = (role === 'staff_new') ? 'nattawut.y@airasia.com' : 'manager.mkt@airasia.com';
-    document.getElementById('loading-text-main').textContent = `กำลังเข้าสู่ระบบผ่าน ${emailText}...`;
-    document.getElementById('loading-subtext-main').textContent = `Authenticating Google Account & Syncing Dashboard`;
+    const tabsToConfig = [
+        { id: 'info', name: "Info (หน้าข้อมูล)" },
+        { id: 'my-performance', name: "My Performance (ผลงานของฉัน)" },
+        { id: 'my-learning', name: "My Learning (การเรียนรู้ของฉัน)" },
+        { id: 'team-performance', name: "Team's Performance (ผลงานทีม)" },
+        { id: 'team-learning', name: "Team's Learning (การเรียนรู้ทีม)" }
+    ];
 
-    setTimeout(() => {
-        document.getElementById('scr-loading').classList.remove('active');
-        switchDemoRole(role);
-    }, 700);
+    html += tabsToConfig.map(t => {
+        const isChecked = systemConfig.tabs[t.id] !== false; 
+        return `
+        <div class="config-row">
+            <div style="font-size:14px; font-weight:600; color:#1c2130;">${t.name}</div>
+            <label class="switch">
+              <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleTabConfig('${t.id}', this.checked)">
+              <span class="slider"></span>
+            </label>
+        </div>
+        `;
+    }).join('');
+    list.innerHTML = html;
 };
 
-// --- SWITCH DEMO ROLE WITH DYNAMIC SYNC ---
-window.switchDemoRole = (role) => {
-    CURRENT_ROLE = role;
-    ME = (role === 'staff_new') ? TEAM[0] : MOCK_MANAGER;
+window.toggleTabConfig = function(key, isEnabled) {
+    if(key === 'mandatoryFirst') systemConfig.mandatoryFirst = isEnabled;
+    else systemConfig.tabs[key] = isEnabled;
+    
+    applyUserContext();
+    if(currentTabId === 'my-learning') renderMyLearning(); 
+};
 
-    // Update Header Info
+window.startProxy = function() {
+    const empId = document.getElementById('proxy-empid-input').value.trim().toUpperCase();
+    if(!empId) return Swal.fire({ text: 'กรุณาระบุรหัสพนักงานที่ต้องการดูข้อมูล', icon: 'warning' });
+    
+    let target = TEAM.find(t => t.empId === empId);
+    if(!target && empId === 'MKT-001') target = TEAM[0];
+    if(!target) return Swal.fire({ text: 'ไม่พบพนักงานรหัสนี้ในระบบจำลอง (ลอง MKT-002 ถึง MKT-005)', icon: 'error' });
+
+    closeAdminModal();
+    isProxyMode = true;
+    PROXY_ME = target;
+    applyUserContext();
+};
+
+window.exitProxy = function() {
+    isProxyMode = false;
+    PROXY_ME = null;
+    document.getElementById('proxy-empid-input').value = '';
+    applyUserContext();
+};
+
+window.applyUserContext = function() {
+    ME = isProxyMode ? PROXY_ME : (CURRENT_ROLE === 'staff_new' ? TEAM[0] : MOCK_MANAGER);
+    
     document.getElementById('header-name').textContent = ME.name;
-    document.getElementById('header-role').textContent = (ME.role === 'manager') ? `${ME.position} | Line Manager Role` : ME.position;
+    document.getElementById('header-role').textContent = (ME.role === 'manager' && !isProxyMode) ? `${ME.position} | Line Manager Role` : ME.position;
     document.getElementById('header-avatar').src = ME.photoURL;
     document.getElementById('me-avatar-img').src = ME.photoURL;
     document.getElementById('me-name-text').textContent = ME.name;
-    document.getElementById('me-role-text').textContent = (ME.role === 'manager') ? `${ME.position} | Line Manager Role` : ME.position;
+    document.getElementById('me-role-text').textContent = (ME.role === 'manager' && !isProxyMode) ? `${ME.position} | Line Manager Role` : ME.position;
 
-    // Build Role Tabs for Mobile & Desktop
+    const proxyBanner = document.getElementById('proxy-banner');
+    if(isProxyMode) {
+        document.getElementById('proxy-target-name').textContent = `${ME.name} (${ME.empId})`;
+        proxyBanner.classList.add('active');
+        document.body.classList.add('has-proxy');
+    } else {
+        proxyBanner.classList.remove('active');
+        document.body.classList.remove('has-proxy');
+    }
+
     let tabHtmlDesktop = '<span class="tab-indicator" id="tab-indicator"></span>';
     let tabHtmlMobile = '';
     
-    const tabs = [
-        { id: 'my-performance', en: 'My Performance', th: 'ผลงานของฉัน', ic: '★' },
-        { id: 'my-learning', en: 'My Learning', th: 'การเรียนรู้ของฉัน', ic: '🎓' }
-    ];
-    if (role === 'manager') {
-        tabs.push({ id: 'team-performance', en: "Team's Performance", th: 'ผลงานทีม', ic: '👥' });
-        tabs.push({ id: 'team-learning', en: "Team's Learning", th: 'การเรียนรู้ทีม', ic: '📘' });
+    let tabs = [];
+    if (systemConfig.tabs['info']) tabs.push({ id: 'info', en: 'Info', th: 'ข้อมูล', ic: 'ℹ️' });
+    if (systemConfig.tabs['my-performance']) tabs.push({ id: 'my-performance', en: 'My Performance', th: 'ผลงานของฉัน', ic: '★' });
+    if (systemConfig.tabs['my-learning']) tabs.push({ id: 'my-learning', en: 'My Learning', th: 'การเรียนรู้ของฉัน', ic: '🎓' });
+    
+    if (CURRENT_ROLE === 'manager' && !isProxyMode) {
+        if (systemConfig.tabs['team-performance']) tabs.push({ id: 'team-performance', en: "Team's Performance", th: 'ผลงานทีม', ic: '👥' });
+        if (systemConfig.tabs['team-learning']) tabs.push({ id: 'team-learning', en: "Team's Learning", th: 'การเรียนรู้ทีม', ic: '📘' });
     }
 
     tabs.forEach(t => {
@@ -795,25 +967,34 @@ window.switchDemoRole = (role) => {
     document.getElementById('tabbar-desktop').innerHTML = tabHtmlDesktop;
     document.getElementById('tabbar-mobile').innerHTML = tabHtmlMobile;
 
-    // Show App Screen
-    document.getElementById('scr-app').classList.add('active');
+    let tabToOpen = currentTabId;
+    if (!tabs.find(t => t.id === currentTabId)) tabToOpen = tabs[0]?.id || 'info';
+    showContent(tabToOpen);
+};
 
-    // Default tab
-    const defaultTab = (role === 'staff_new') ? 'my-learning' : 'team-performance';
-    showContent(defaultTab);
+window.triggerGoogleAuthModal = () => { document.getElementById('google-auth-modal').classList.add('active'); };
+window.selectGoogleAccount = (role) => {
+    document.getElementById('google-auth-modal').classList.remove('active');
+    document.getElementById('scr-login').classList.remove('active');
+    document.getElementById('scr-loading').classList.add('active');
+    setTimeout(() => {
+        document.getElementById('scr-loading').classList.remove('active');
+        document.getElementById('scr-app').classList.add('active');
+        CURRENT_ROLE = role;
+        isProxyMode = false;
+        PROXY_ME = null;
+        currentTabId = 'info';
+        applyUserContext();
+    }, 700);
 };
 
 window.handleLogout = () => {
     document.getElementById('scr-app').classList.remove('active');
     document.getElementById('scr-login').classList.add('active');
 };
-
 window.escapeAttr = (s) => String(s).replace(/"/g,'&quot;');
 window.escapeHtml = (s) => String(s).replace(/&/g,'&amp;').replace(/</g,'&gt;');
-window.showToast = (msg) => {
-    // Disabled toast messages during demo to prevent blocking UI
-    // console.log("Toast:", msg);
-};
+window.showToast = (msg) => { /* muted for demo */ };
 
 window.showContent = (id) => {
     document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
@@ -826,13 +1007,11 @@ window.showContent = (id) => {
     if(btnDesktop) {
         btnDesktop.classList.add('active');
         const indicator = document.getElementById('tab-indicator');
-        indicator.style.left = btnDesktop.offsetLeft + 'px';
-        indicator.style.width = btnDesktop.offsetWidth + 'px';
+        if(indicator) { indicator.style.left = btnDesktop.offsetLeft + 'px'; indicator.style.width = btnDesktop.offsetWidth + 'px'; }
     }
-    if(btnMobile) {
-        btnMobile.classList.add('active');
-    }
+    if(btnMobile) btnMobile.classList.add('active');
 
+    currentTabId = id;
     if(id === 'my-performance') renderMyPerformance();
     if(id === 'my-learning') renderMyLearning();
     if(id === 'team-performance') renderPerfGrid(1);
@@ -840,7 +1019,6 @@ window.showContent = (id) => {
     window.scrollTo(0,0);
 };
 
-// --- RENDER LOGIC ---
 window.renderMyPerformance = () => {
     document.getElementById('me-balance').textContent = ME.balance;
     const list = document.getElementById('my-perf-list');
@@ -866,8 +1044,15 @@ window.renderMyLearning = () => {
           <div class="desc">${c.desc.slice(0,90)}…</div><div class="arrow">↘</div>
         </button>`;
     };
-    document.getElementById('mylearn-mandatory').innerHTML = ALL_COMPETENCIES.filter(c=>c.type==='mandatory').map(renderCard).join('');
-    document.getElementById('mylearn-selective').innerHTML = ALL_COMPETENCIES.filter(c=>c.type==='selective').map(renderCard).join('');
+    
+    const sel = ALL_COMPETENCIES.filter(c=>c.type==='selective');
+    const man = ALL_COMPETENCIES.filter(c=>c.type==='mandatory');
+    
+    document.getElementById('section-mandatory').style.order = systemConfig.mandatoryFirst ? "1" : "2";
+    document.getElementById('section-selective').style.order = systemConfig.mandatoryFirst ? "2" : "1";
+
+    document.getElementById('mylearn-mandatory').innerHTML = man.map(renderCard).join('');
+    document.getElementById('mylearn-selective').innerHTML = sel.map(renderCard).join('');
 };
 
 window.renderPerfGrid = (page) => {
@@ -916,24 +1101,15 @@ window.updatePointBox = (input) => {
     input.classList.toggle('pos', val>=0); input.classList.toggle('neg', val<0);
 };
 
-// MANAGER JUSTIFICATIONS IMMEDIATELY SYNC TO EMPLOYEE!
 window.submitJustification = () => {
     const topic = document.getElementById('just-topic-input').value.trim();
     const desc = document.getElementById('just-desc-input').value.trim();
     const val = parseInt(document.getElementById('just-point-input').value || '0', 10);
     if (!topic) return Swal.fire({ text: 'กรุณากรอกหัวเรื่อง (Topic)', icon: 'warning' });
     
-    // Updates TEAM[i] directly
     TEAM[currentMemberIdx].balance += val;
     TEAM[currentMemberIdx].recentLogs.unshift({ topic, points: val, desc, timestamp: new Date().toISOString() });
-    
-    const targetName = TEAM[currentMemberIdx].name;
-    Swal.fire({ 
-        title: 'ให้คะแนนสำเร็จ!',
-        text: `ปรับคะแนนให้ ${targetName} (${val>=0?'+':''}${val} คะแนน) ข้อมูลจะซิงค์ไปหน้า Dashboard ของพนักงานทันที`, 
-        icon: 'success', 
-        confirmButtonColor: '#0091ff' 
-    });
+    Swal.fire({ title: 'ให้คะแนนสำเร็จ!', text: `ปรับคะแนนให้ ${TEAM[currentMemberIdx].name} สำเร็จ (ระบบ Demo)`, icon: 'success', confirmButtonColor: '#0091ff' });
     showContent('team-performance');
 };
 
@@ -963,7 +1139,6 @@ window.saveEditFull = (idx) => {
     editingIdx = null; renderEditEntries(); 
 };
 
-// EMPLOYEE GOAL SELECTION SYNCED DIRECTLY TO TEAM DATA!
 window.toggleSelection = (key) => {
     if(ME.selections[key]) {
         delete ME.selections[key];
@@ -981,7 +1156,6 @@ window.openCompetency = (key, interactive, scope) => {
 window.closeModal = () => { document.getElementById('modal').classList.remove('active'); };
 window.toggleActivity = (i) => { expandedActivity = (expandedActivity===i) ? null : i; renderModalBody(); };
 
-// EMPLOYEE LIVE UPLOAD & REFLECTION SYNCED DIRECTLY!
 window.handleDemoUpload = (event, i) => {
     const file = event.target.files[0];
     if(!file) return;
