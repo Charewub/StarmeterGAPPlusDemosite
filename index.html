@@ -42,10 +42,6 @@
 
   /* ===== Logo ===== */
   .logo-slot{display:inline-flex;align-items:center;gap:9px;}
-  .logo-slot .wordmark{font-weight:800;color:var(--navy);letter-spacing:-.3px;}
-  .logo-slot[data-size="small"] .wordmark{font-size:19px;}
-  .logo-slot[data-size="big"]{flex-direction:column;gap:6px;}
-  .logo-slot[data-size="big"] .wordmark{font-size:36px;letter-spacing:-.5px;}
   .logo-img{display:block;object-fit:contain; max-height: 100%;}
   .logo-slot[data-size="small"] .logo-img{height:36px;width:auto;}
   .logo-slot[data-size="big"] .logo-img{height:80px;width:auto;}
@@ -725,20 +721,9 @@ window.onload = () => {
 };
 
 function renderLogos() {
-    const imgUrl = 'https://img1.pic.in.th/images/logocf8c43517981bfe3.png';
-    const fallbackSvgBig = `<svg class="logo-img" width="60" height="38" viewBox="0 0 66 42"><defs><radialGradient id="g1b" cx="30%" cy="30%" r="80%"><stop offset="0%" stop-color="#ffb648"/><stop offset="55%" stop-color="#ff5a3c"/><stop offset="100%" stop-color="#ff2f2f"/></radialGradient></defs><circle cx="18" cy="21" r="18" fill="url(#g1b)"/><circle cx="48" cy="21" r="18" fill="url(#g1b)"/></svg>`;
-    const fallbackSvgSmall = `<svg class="logo-img" width="26" height="17" viewBox="0 0 66 42"><defs><radialGradient id="g1s" cx="30%" cy="30%" r="80%"><stop offset="0%" stop-color="#ffb648"/><stop offset="55%" stop-color="#ff5a3c"/><stop offset="100%" stop-color="#ff2f2f"/></radialGradient></defs><circle cx="18" cy="21" r="18" fill="url(#g1s)"/><circle cx="48" cy="21" r="18" fill="url(#g1s)"/></svg>`;
-
+    const imgUrl = 'https://firebasestorage.googleapis.com/v0/b/gap-learning-plan.firebasestorage.app/o/logo.png?alt=media&token=0c6d0ed6-c5ea-46f2-b31a-3698d915ad56';
     document.querySelectorAll('.logo-slot').forEach(el => {
-        const isBig = el.dataset.size === 'big';
-        const img = new Image();
-        img.src = imgUrl;
-        img.className = 'logo-img';
-        img.alt = 'StarMeter';
-        img.onload = () => { el.innerHTML = ''; el.appendChild(img); };
-        img.onerror = () => {
-            el.innerHTML = (isBig ? fallbackSvgBig : fallbackSvgSmall) + `<span class="wordmark">StarMeter</span>`;
-        };
+        el.innerHTML = `<img src="${imgUrl}" alt="StarMeter logo" class="logo-img">`;
     });
 }
 
